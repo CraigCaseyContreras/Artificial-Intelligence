@@ -3,6 +3,14 @@ import numpy as np
 from itertools import product
 
 unique_val = []
+INITIAL_1 = (3,0)
+INITIAL_2 = (0,0)
+INITIAL_3 = (1,1)
+FINAL_1 = [2,1]
+FINAL_2 = [0,1]
+FINAL_3 = [2,2]
+
+FINAL_POINTS = (FINAL_1, FINAL_2, FINAL_3)
 
 class State(object):
     def __init__(self, value, parent, start = 0, goal = 0):
@@ -42,7 +50,7 @@ class State(object):
             distance = y_val + x_val
             # appends distances to list
             dist_list.append(distance)
-        return dist_list
+        return dist_list, unique_val
         # starter = dist_list.index(min(dist_list)) + 1
         # print(starter)
 
@@ -58,7 +66,7 @@ class State(object):
         else:
             return True
 
-
+    #Need to figure out this. All it does it makes it starts with 3
     def eval_function(self, d_list, board):
         # pulls index for the minimum distance. For our board, it will be an index of 2. Symbolizes that
         # the pair of three's on the board are closest together
@@ -111,10 +119,50 @@ class State(object):
         #print(updated_list)
         return updated_list
 
+    #player 1 start is (0,0) --> 2,1
+    def CreateChildren(self, board):
+        # 1- get the players that can move, i.e., not the end state
+        # 2- once the players are retrieved, get the available points to move
+        # 3- validate all the points at the same time
 
-    def CreateChildren(self):
-        pass
+        children = []
+        pair_points = [[],[],[] ] #3 b/c there are only three players
+        points_to_move_with = []
+        indexes = []
+        players = unique_val
+        
+        for i in players:
+            print(i)
+            have_sx = np.where(board == i) #List of every coordinate that is 0
+            have_sx = np.asarray(have_sx).T.tolist()
+            pair_points[i-1].append(have_sx)
+            print(pair_points[i-1][0], 'FOR PLAYER', i)
 
+        for i in range(len(pair_points)):
+            for k in range(len(pair_points)-1):
+                print(pair_points[i][0][k])
+                if pair_points[i][0][k] not in FINAL_POINTS:
+                    points_to_move_with.append(pair_points[i][0][k])
+                    #pair_points[i][0][k].append(points_to_go_to)
+        
+        for i in range(len(points_to_move_with)):
+            for kl in range(len(points_to_move_with)-1):
+                print(points_to_move_with[i][kl])
+
+        print(points_to_move_with)
+        indexes.append((1,1))
+        print(indexes)
+
+        #print(points_to_move_with[0][0])
+        #print(points_to_move_with[1][1])
+        #print(points_to_move_with[1][0])
+        #print(points_to_move_with[1][1])
+        #Now form these points, we have to generate children.
+
+        #index = (x1,y1)
+        #qw = list(self.neighbors(index))
+        #print(qw)
+        #print(index)
 
 class HillSolver:
     def __init__(self, start, goal):
@@ -126,18 +174,27 @@ class HillSolver:
 
     def solve(self):
         initialState = State(self.start, 0, self.start, self.goal) #0 because not a parent
-        coordinates = initialState.GetDist(self.start)
-        intial_mover = initialState.eval_function(coordinates, self.start)
-        neighbor_list = list(initialState.neighbors((1,1)))
-        moves = initialState.removeCheats(self.start, neighbor_list, (1,1))
+        distances, players = initialState.GetDist(self.start) #returns [3,4,2] - the distances of 1,2,3 respectively
+        
+        #initial_mover = initialState.eval_function(distances, self.start)
+        
+        #After this, it should all be to create childre. So createChildren() should call all the other functions.
+        #print('initial mover: ', initial_mover)
+        
+        neighbor_list = list(initialState.neighbors(INITIAL_3))
+        print(neighbor_list)
+        moves = initialState.removeCheats(self.start, neighbor_list, INITIAL_3)
         print('Available moves are: ', moves)
         
+        #Make the point chosen in create children
         #Makes a point be chosen. For testing purposes I made it choose (2,1)
-        point_chosen = moves[3]
-        if initialState.isSafe(self.start, moves[3]) == True:
+        point_chosen = moves[1]
+        if initialState.isSafe(self.start, moves[1]) == True:
             print('Valid')
         else:
             print('Not valid')
+
+        print(initialState.CreateChildren(self.start))
         
 
 if __name__ == '__main__':
