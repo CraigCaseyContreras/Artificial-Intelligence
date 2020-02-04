@@ -2,10 +2,10 @@ import numpy as np
 from itertools import product
 
 # Our initial flow free state
-matrix = np.array([[1, 2, 0, 3],
+matrix = np.array([[1, 2, 0, 0],
                    [0, 3, 0, 0],
-                   [0, 1, 0, 0],
-                   [0, 0, 0, 2]])
+                   [0, 1, 3, 0],
+                   [2, 0, 0, 0]])
 
 unique_val = []  # empty list. will hold unique values from matrix
 
@@ -24,10 +24,15 @@ def neighbors(index):
 # I haven't actually used this anywhere....
 # Maybe do this AFTER the AI has chosen a point to go to. And this function determines if the point is safe or not.
 
+def maxBoardLength(board):
+    max_rows = len(board)
+    max_columns = max(map(len, board))
+    return max_rows, max_columns
+
 def isSafe(board, point):
     #The board being the matrix
     #The point being the point chosen from the path(s)
-    print('The point is: ', point)
+    print('Chosen point to move to is: ', point)
     x = point[0]
     y = point[1]
     print(board[x][y])
@@ -81,14 +86,17 @@ def eval_function(d_list, board):
     return(start)
 
 
-def removeDiags(neighborList, point):
+def removeCheats(neighborList, point):
     updated_list = []
+    max_rows, max_columns = maxBoardLength(matrix)
     for i in range(len(neighborList)):
         #Removes the diagonals
         if abs(sum(neighborList[i]) - sum(point)) != 2 and abs(sum(neighborList[i]) - sum(point)) !=0:
             #Removes the negatives
             if sum(neighborList[i]) > 0:
-                updated_list.append(neighborList[i])
+                #Takes care of the out of grid
+                if neighborList[i][0] < max_rows and neighborList[i][1] < max_columns:
+                    updated_list.append(neighborList[i])
     #print(updated_list)
     return updated_list
 
@@ -103,25 +111,25 @@ def main():
     #We picked the one with the least amount of children. Get its coordinates. Then, we have to get all of its neighbors. So since we know it is at (1,1)
     #Need to make function that finds out what the coordinate of the one with least children is
     #We established that 3 should move first. Now we just have to figure out which 3? 
-    neighbor_list = list(neighbors((3,3)))
+    neighbor_list = list(neighbors((1,1)))
     print('The neighbors are: ',neighbor_list)
     #Now to remove illegal diagonal elements
-    neighbor_list = removeDiags(neighbor_list, (3,3))
+    neighbor_list = removeCheats(neighbor_list, (1,1))
     print('The neighbors are: ',neighbor_list)
     
+
     #Make the point be chosen
     #Say the point chosen is (2,1) - need a function that says this cannot be a move because it is occupied
     
-    if isSafe(matrix,neighbor_list[1]) == True:
+    if isSafe(matrix,neighbor_list[3]) == True:
         print('Validated')
         #Now need to update the thing
     else:
         print('Not valid')
 
     #Update the array so that the move as been made
-
     #Do the same for the rest of the 2 elements
-
+    
 
 if __name__ == '__main__':
     main()
