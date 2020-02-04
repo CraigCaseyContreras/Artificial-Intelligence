@@ -2,14 +2,14 @@ import numpy as np
 from itertools import product
 
 # Our initial flow free state
-matrix = np.array([[1, 2, 0, 0],
+matrix = np.array([[1, 2, 0, 3],
                    [0, 3, 0, 0],
-                   [0, 1, 3, 0],
-                   [2, 0, 0, 0]])
+                   [0, 1, 0, 0],
+                   [0, 0, 0, 2]])
 
 unique_val = []  # empty list. will hold unique values from matrix
 
-ADJACENTS = {(1,0), (0,1), (-1,0), (0,-1)}
+#ADJACENTS = {(1,0), (0,1), (-1,0), (0,-1)}
 
 #function that returns the neighbors
 def neighbors(index):
@@ -18,27 +18,23 @@ def neighbors(index):
     for relative_index in product((-1, 0, 1), repeat=N):
         if not all(i == 0 for i in relative_index):
             everyone = list(i + i_rel for i, i_rel in zip(index, relative_index))
-            
-            #Now need to figure out which paths are safe. So I was going to use the function the Victo was writing or update it.
-            #The safe path would be one that it did not visit or one that makes it move diagonally or hit another number.
-            #So like isSafe() would remove all of the 'unsafe' ones
-            #Updates the list and then the program can choose which way to go
-            
             yield everyone
-            #print(everyone[0], 'all0')
-            #print(everyone[1], 'all1')
-            
 
 # function makes sure we don't step off the board
 # I haven't actually used this anywhere....
-def isSafe(board, x, y):
-    dim = np.size(board,1)
-    if 0 <= x < dim and 0 <= y < dim:
+# Maybe do this AFTER the AI has chosen a point to go to. And this function determines if the point is safe or not.
+
+def isSafe(board, point):
+    #The board being the matrix
+    #The point being the point chosen from the path(s)
+    print('The point is: ', point)
+    x = point[0]
+    y = point[1]
+    print(board[x][y])
+    if board[x][y] != 0:
+        return False
+    else:
         return True
-
-    return False
-
-
 
 def cost_function(board):
     dist_list = []  # empty list. will hold distances between 2 points on flow-free board
@@ -84,17 +80,47 @@ def eval_function(d_list, board):
     print(start)
     return(start)
 
+
+def removeDiags(neighborList, point):
+    updated_list = []
+    for i in range(len(neighborList)):
+        #Removes the diagonals
+        if abs(sum(neighborList[i]) - sum(point)) != 2 and abs(sum(neighborList[i]) - sum(point)) !=0:
+            #Removes the negatives
+            if sum(neighborList[i]) > 0:
+                updated_list.append(neighborList[i])
+    #print(updated_list)
+    return updated_list
+
 #Returns the list of distances NOT the elements or parents
 #What this did is essentially pick the shortest distance. So since the list was (3,4,2). This 2 corresponds to the index 2. At index 2, we have the element '3'.
 #So it chose 3. Thus, 3 is our 'first mover'. Remeber that '3' has a distnce of 2 to finish. We go by indices.
+
 def main():
     initial_mover = eval_function(cost_function(matrix), matrix) 
     print(initial_mover)
 
     #We picked the one with the least amount of children. Get its coordinates. Then, we have to get all of its neighbors. So since we know it is at (1,1)
-    print('The neighbors are: ',list(neighbors((1,1))))
-
+    #Need to make function that finds out what the coordinate of the one with least children is
     #We established that 3 should move first. Now we just have to figure out which 3? 
+    neighbor_list = list(neighbors((3,3)))
+    print('The neighbors are: ',neighbor_list)
+    #Now to remove illegal diagonal elements
+    neighbor_list = removeDiags(neighbor_list, (3,3))
+    print('The neighbors are: ',neighbor_list)
+    
+    #Make the point be chosen
+    #Say the point chosen is (2,1) - need a function that says this cannot be a move because it is occupied
+    
+    if isSafe(matrix,neighbor_list[1]) == True:
+        print('Validated')
+        #Now need to update the thing
+    else:
+        print('Not valid')
+
+    #Update the array so that the move as been made
+
+    #Do the same for the rest of the 2 elements
 
 
 if __name__ == '__main__':
