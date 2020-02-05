@@ -147,7 +147,7 @@ class State(object):
 
 				children = []
 				pair_points = [[],[],[] ] #3 b/c there are only three players
-				tester = {}
+				parent_child = {}
 				players = unique_val
 
 				for i in players:
@@ -164,8 +164,8 @@ class State(object):
 				for j in range(len(res)):
 						neigh_list = list(self.neighbors(res[j]))
 						moves = self.removeCheats(board, neigh_list, res[j])
-						tester.update({res[j]: moves})
-				print(tester)
+						parent_child.update({res[j]: moves})
+				print(parent_child)
 
 
 class HillSolver:

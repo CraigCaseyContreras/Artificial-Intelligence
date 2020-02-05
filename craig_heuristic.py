@@ -203,6 +203,8 @@ class HillSolver:
 				#for x in tester:
 				#    val = tester[x][0]
 				#print(val)
+				
+				#After creating the children, should make the function to choose based on the distances and other crap that I forgot. But basically, start implementing the algorithms I think.
 				initialState.CreateChildren(self.start)
 				
 
