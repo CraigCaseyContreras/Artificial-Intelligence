@@ -111,8 +111,10 @@ class State(object):
 				max_rows, max_columns = self.maxBoardLength(start)
 				for i in range(len(neighborList)):
 						#Removes the diagonals
-						if abs(sum(neighborList[i]) - sum(point)) != 2 and abs(sum(neighborList[i]) - sum(point)) !=0:  #Removes the negatives
-								if sum(neighborList[i]) > 0:
+						if abs(sum(neighborList[i]) - sum(point)) != 2 and abs(sum(neighborList[i]) - sum(point)) !=0:  
+						#Removes the negatives
+								#print(neighborList[i][0], 'this is the neighbor list')
+								if neighborList[i][0] >= 0 and neighborList[i][1] >= 0:
 										#Takes care of the out of grid
 										if neighborList[i][0] < max_rows and neighborList[i][1] < max_columns:
 												updated_list.append(neighborList[i])
@@ -165,7 +167,8 @@ class State(object):
 						neigh_list = list(self.neighbors(res[j]))
 						moves = self.removeCheats(board, neigh_list, res[j])
 						parent_child.update({res[j]: moves})
-				print(parent_child)
+				#print(parent_child, 'parent child')
+				return parent_child
 
 
 class HillSolver:
@@ -203,7 +206,9 @@ class HillSolver:
 				#for x in tester:
 				#    val = tester[x][0]
 				#print(val)
-				initialState.CreateChildren(self.start)
+				
+				#After creating the children, should make the function to choose based on the distances and other crap that I forgot. But basically, start implementing the algorithms I think.
+				parent_child_dict = initialState.CreateChildren(self.start)
 				
 
 if __name__ == '__main__':
