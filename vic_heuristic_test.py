@@ -162,6 +162,17 @@ class State(object):
             moves = self.removeCheats(board, neigh_list, res[j])
             parent_child.update({res[j]: moves})
         # print(parent_child, 'parent child')
+
+        # ALL POSSIBLE COMBOS OF MOVES
+        combos = list(product(*(parent_child.values())))
+        # ELIMINATE MOVES THAT WOULD MOVE 2 NUMBERS TO THE SAME BLOCK
+        # Store legal moves in list names "perm". Perm stands for "permutation".
+        perm = []
+        for k in range(0, len(combos)):
+            if combos[k][0] != combos[k][1] and combos[k][0] != combos[k][2] and combos[k][1] != combos[k][2]:
+                perm.append(combos[k])
+        print(perm, "perm")
+        
         return parent_child
 
 
