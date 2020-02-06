@@ -42,7 +42,8 @@ class State(object):
         for i in unique_val:
             coord = np.where(board == i)
             coord = np.asarray(coord).T.tolist()
-            print(coord, 'COORD')
+            # print(coord, 'COORD')
+
             # counts number of vertical steps (rows)
             x_val = abs(coord[0][0] - coord[1][0])
             # counts number of horizontal steps (columns)
@@ -161,7 +162,7 @@ class State(object):
             neigh_list = list(self.neighbors(res[j]))
             moves = self.removeCheats(board, neigh_list, res[j])
             parent_child.update({res[j]: moves})
-        # print(parent_child, 'parent child')
+        print(parent_child, 'parent child')
 
         # ALL POSSIBLE COMBOS OF MOVES
         combos = list(product(*(parent_child.values())))
@@ -172,7 +173,23 @@ class State(object):
             if combos[k][0] != combos[k][1] and combos[k][0] != combos[k][2] and combos[k][1] != combos[k][2]:
                 perm.append(combos[k])
         print(perm, "perm")
+
+        # THE CODE DOWN HERE IS NOT FINISHED
+        # fill in children squares
         
+        # for l in range(0, len(perm)):
+        #     new_board = []
+        #     new_board = board
+        #     # USED IN TROUBLESHOOTING
+        #     print(perm[l], "perm")
+        #     print(perm[l][2][0], "p1")
+        #     print(perm[l][2][1], "p2")
+        #     print(new_board, "INITIAL NEW")
+        #     new_board[perm[l][0][0]][perm[l][0][1]] = 1
+        #     new_board[perm[l][1][0]][perm[l][1][1]] = 2
+        #     new_board[perm[l][2][0]][perm[l][2][1]] = 3
+        #     children.append(new_board)
+        # print(children, "board")
         return parent_child
 
 
