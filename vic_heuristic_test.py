@@ -176,20 +176,20 @@ class State(object):
 
         # THE CODE DOWN HERE IS NOT FINISHED
         # fill in children squares
-        
-        # for l in range(0, len(perm)):
-        #     new_board = []
-        #     new_board = board
-        #     # USED IN TROUBLESHOOTING
-        #     print(perm[l], "perm")
-        #     print(perm[l][2][0], "p1")
-        #     print(perm[l][2][1], "p2")
-        #     print(new_board, "INITIAL NEW")
-        #     new_board[perm[l][0][0]][perm[l][0][1]] = 1
-        #     new_board[perm[l][1][0]][perm[l][1][1]] = 2
-        #     new_board[perm[l][2][0]][perm[l][2][1]] = 3
-        #     children.append(new_board)
-        # print(children, "board")
+
+        new_board = list()
+        for l in range(0, len(perm)):
+            new_board[:] = board
+            # USED IN TROUBLESHOOTING
+            print(perm[l], "perm")
+            # print(perm[l][2][0], "p1")
+            # print(perm[l][2][1], "p2")
+            print(new_board, "INITIAL NEW")
+            new_board[perm[l][0][0]][perm[l][0][1]] = 1
+            new_board[perm[l][1][0]][perm[l][1][1]] = 2
+            new_board[perm[l][2][0]][perm[l][2][1]] = 3
+            children.append(new_board)
+        print(children, "kids")
         return parent_child
 
 
