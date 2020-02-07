@@ -146,7 +146,7 @@ class State(object):
 					if combos[k][0] != combos[k][1] and combos[k][0] != combos[k][2] and combos[k][1] != combos[k][2]:
 							perm.append(combos[k])
 			print(perm, "perm")
-			print(self.GetDistPerm(perm))
+			print(self.GetDistPerm(perm), "DIST LIST")
 			
 			# THE CODE DOWN HERE IS NOW FINISHED
 			i = 0

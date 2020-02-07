@@ -66,10 +66,6 @@ class State(object):
 
 		def GetDistPerm(self, perm):
 			dist_list = []
-			length = len(perm[0])
-			print(perm[0], 'perm0')
-			print(perm[0][0], 'perm00')
-			print(len(perm), 'lenjkajkdajks')
 			for i in range(len(perm)):
 				for k in range(len(unique_val)):
 					print(perm[i][k], 'vghvhghvhhgvh')
