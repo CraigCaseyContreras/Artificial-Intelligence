@@ -64,22 +64,29 @@ class State(object):
 				else:
 						return True
 
+		def GetDistPerm(self, perm):
+			dist_list = []
+			length = len(perm[0])
+			print(perm[0], 'perm0')
+			print(perm[0][0], 'perm00')
+			print(len(perm), 'lenjkajkdajks')
+			for i in range(len(perm)):
+				for k in range(len(unique_val)):
+					print(perm[i][k], 'vghvhghvhhgvh')
+					print(FINAL_POINTS[k][0], "FINAL POINTS K 0")
+					x_val = abs(perm[i][k][0] - FINAL_POINTS[k][0])
+					# counts number of horizontal steps (columns)
+					y_val = abs(perm[i][k][1] - FINAL_POINTS[k][1])
+					# calculates total distance
+					distance = y_val + x_val
+					# appends distances to list
+					dist_list.append(distance)
+			return dist_list
+			
 		# Need to figure out this. All it does it makes it starts with 3
-		def eval_function(self, d_list):
-				# pulls index for the minimum distance. For our board, it will be an index of 2. Symbolizes that
-				# the pair of three's on the board are closest together
-				print(d_list)
-				start = np.argmin(d_list)
-				# replace the value at index 2 with 100, so that next time we search for the minimum in the list, it won't pick the
-				# value at index 2 again
-				d_list[start] = 100
-				# the d_list is now [3, 4, 100]. Therefore the next minimum is the value 3 at index zero. Index zero corresponds
-				# with the pair of ones on the board.
-				print(d_list)
-				print(start)
-				start = start + 1
-				print(start)
-				return (start)
+		def eval_function(self, perm):
+			self.GetDistPerm(perm)
+				
 
 		def neighbors(self, index):
 				print('The point is at: ', index)
@@ -139,6 +146,7 @@ class State(object):
 					if combos[k][0] != combos[k][1] and combos[k][0] != combos[k][2] and combos[k][1] != combos[k][2]:
 							perm.append(combos[k])
 			print(perm, "perm")
+			print(self.GetDistPerm(perm))
 			
 			# THE CODE DOWN HERE IS NOW FINISHED
 			i = 0
@@ -229,7 +237,10 @@ class HillSolver: #EVAL FUNCTION SHOULD BE IN THIS CLASS BECAUSE IT IS DIFFERENT
 		
 				#How to add to L seen
 				L_seen.append(np.asarray(self.start).T.tolist())
-				print(L_seen[0])
+
+
+				#LSEEN would have the points it started on. So automatically add the points when the board is passed in
+				#
 
 				
 				#Need to update functions to include Lseen so that it doesn't look at distances or go back to the initial spots again.
