@@ -3,7 +3,7 @@ import numpy as np
 import itertools
 from itertools import product
 
-unique_val = []
+unique_val = [1,2,3]
 INITIAL_1 = (3, 0)
 INITIAL_2 = (0, 0)
 INITIAL_3 = (1, 1)
@@ -126,17 +126,7 @@ class State(object):
 				for lk in range(len(points_to_move_with)):
 					tupled.append(tuple(points_to_move_with[lk]))
 				print(tupled, "_points2__")
-					
-					
-				'''for i in range(len(points_to_move_with)):
-						for kl in range(len(points_to_move_with) - 1):
-								print(points_to_move_with[i][kl])
-								individual_points.append(points_to_move_with[i][kl])
-
-				indices = list(zip(individual_points, individual_points[1:] + individual_points[:1]))
-				del indices[1::2]
-				print(indices, 'indices')
-				print(tupled, 'tupled')'''
+		
 				return tupled
 
 
@@ -187,6 +177,8 @@ class State(object):
 						pair_points[i - 1].append(have_sx)
 						print(pair_points[i - 1][0], 'FOR PLAYER', i)
 
+				#[x,y] not (x,y)
+				
 				print(pair_points, 'pair points!!!')
 				# Converts the points to indices which can then be passed on to the getNeighbors function and return the neighbors in order to determine children.
 				res = self.getIndices(pair_points)  # players/indices that can be moved
@@ -215,9 +207,10 @@ class HillSolver: #EVAL FUNCTION SHOULD BE IN THIS CLASS BECAUSE IT IS DIFFERENT
 				self.goal = goal
 
 		def solve(self):
+				L_seen = list()
 				self.path.append(self.start)
 				initialState = State(self.start, self.goal)  # 0 because not a parent
-				distances, players = initialState.GetDist()  # returns [3,4,2] - the distances of 1,2,3 respectively
+				#print(initialState.GetDist(), 'IS GET DIST')  # returns [3,4,2] - the distances of 1,2,3 respectively
 
 				# initial_mover = initialState.eval_function(distances, self.start)
 
@@ -233,6 +226,11 @@ class HillSolver: #EVAL FUNCTION SHOULD BE IN THIS CLASS BECAUSE IT IS DIFFERENT
 				# After creating the children, should make the function to choose based on the distances and other crap that I forgot. But basically, start implementing the algorithms I think.
 
 				children_boards = initialState.CreateChildren()
+		
+				#How to add to L seen
+				L_seen.append(np.asarray(self.start).T.tolist())
+
+
 				
 				#Need to update functions to include Lseen so that it doesn't look at distances or go back to the initial spots again.
 				#nextState = State(self.start, 0, children_boards[1], self.goal)
