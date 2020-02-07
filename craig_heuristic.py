@@ -121,15 +121,23 @@ class State(object):
 								if pair_points[i][0][k] not in FINAL_POINTS:
 										points_to_move_with.append(pair_points[i][0][k])
 								# pair_points[i][0][k].append(points_to_go_to)
-
-				# Put all the points TOGETHER on a list
-				for i in range(len(points_to_move_with)):
+				
+				tupled = list()
+				for lk in range(len(points_to_move_with)):
+					tupled.append(tuple(points_to_move_with[lk]))
+				print(tupled, "_points2__")
+					
+					
+				'''for i in range(len(points_to_move_with)):
 						for kl in range(len(points_to_move_with) - 1):
+								print(points_to_move_with[i][kl])
 								individual_points.append(points_to_move_with[i][kl])
 
 				indices = list(zip(individual_points, individual_points[1:] + individual_points[:1]))
 				del indices[1::2]
-				return indices
+				print(indices, 'indices')
+				print(tupled, 'tupled')'''
+				return tupled
 
 
 		def allPossibleBoards(self, parent_and_child):
@@ -175,9 +183,11 @@ class State(object):
 						print(i)
 						have_sx = np.where(self.start == i)  # List of every coordinate that is 0,1,2,3,....
 						have_sx = np.asarray(have_sx).T.tolist()
+						print(have_sx, 'have_sx')
 						pair_points[i - 1].append(have_sx)
 						print(pair_points[i - 1][0], 'FOR PLAYER', i)
 
+				print(pair_points, 'pair points!!!')
 				# Converts the points to indices which can then be passed on to the getNeighbors function and return the neighbors in order to determine children.
 				res = self.getIndices(pair_points)  # players/indices that can be moved
 
@@ -248,6 +258,7 @@ if __name__ == '__main__':
 													[0, 3, 0, 0],
 													[0, 1, 3, 0],
 													[2, 0, 0, 0]])
+												
 
 		HillGoal = np.array([[1, 2, 2, 2],
 												[1, 3, 3, 2],
