@@ -205,6 +205,12 @@ class State(object):
 				return children_boards
 
 class HillSolver: #EVAL FUNCTION SHOULD BE IN THIS CLASS BECAUSE IT IS DIFFERENT FOR EVERY ALGORITHM!
+
+		#Eval function: based of list of heruistics assign numers to each board where a high number means a better bord
+		#Make sure the Lseen stuff for the points
+		#If it finds a solution but not all the blocks are filled in, go back and pick another way. HAS to match the anser!! Yeah you connected them, but you used the wrong formula.
+		
+		
 		def __init__(self, start, goal):
 				self.path = [] #this self.path should include the intial board and the children it chooses to go to.
 				self.start = start
