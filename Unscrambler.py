@@ -65,7 +65,11 @@ class StringState(State):
 				#Store the value we generated in the child
 				child = StringState(val, self)
 				self.children.append(child)
-		print('----Next segment----')
+		print('---------------------------')
+		print('---------------------------')
+		print('---------------------------')
+		print('---------------------------')
+		print('---------------------------')
    			
 class AStar_Solver:
 	def __init__(self, start , goal):
@@ -105,6 +109,7 @@ class AStar_Solver:
 						if not child.dist:
 								self.path = child.path
 								break
+						
 						self.priorityQueue.put((child.dist,count,child))
 		self.visitedQueue.append(self.goal)
 		print(self.visitedQueue, 'visited queue')
@@ -114,8 +119,8 @@ class AStar_Solver:
 		return self.path
 			
 if __name__ == "__main__":
-	start1 = "SimpCrteuoencce"
-	goal1  = "ComputerScience"
+	start1 = "3Moailvtu8rs6kba"
+	goal1  = "MiroslavKubat638"
 	print("Starting...")
 
 	start_time = time.time()
