@@ -1,37 +1,45 @@
+import numpy as np
 import itertools
+from itertools import permutations, combinations
 
-# describing a basic hill climbing algorithm
+scrambledword = "tneprxeime"
+finalword = "experiment"
+lseen = []
 
 
-def hillclimb(L, final):
-    Lseen = {}  # list of already checked states
-    curr = list(L)[0]  # the first element in L
-    # this is all more or less psuedocode until I figure out how it's actually supposed to look
-    for i in L:
-        if i not in Lseen:  # only check if it's new
-            if curr != final:  # presumably 'final' is passed to this function
-                # if 'curr' isn't the answer, put it in Lseen
-                Lseen.update(curr)
-                # curr's children need to go in the parentheses below, must figure out how 'CreateChildren' works
-                L.update(sorted(CreateChildren(curr)))
-                L.pop(curr)  # remove curr from L
-                hillclimb(L, final)  # unsure if this recursive function works
+def getdists(sw):
+    # returns a list in positional order of the distances the scrambled letters are from their final positions
+    dist = 0
+    for i in sw:
+        # print(sw.index(i), fw.index(i))
+        dist += abs(sw.index(i)-finalword.index(i))
+    return dist
+
+
+def createchildren(cw):
+    childlist = []
+    for i1, i2 in combinations(range(len(cw)), 2):
+        newword = list(cw)
+        newword[i1], newword[i2] = newword[i2], newword[i1]
+        childlist.append(''.join(newword))
+    return childlist
+
+
+def evalhillclimb(cw):
+    lseen.append(cw)
+    sortedlist = sorted(list(createchildren(cw)), key=getdists)
+    # print("LSeen: ", lseen)
+    # print("list of permutations: ", sortedlist)
+    for perm in sortedlist:
+        if perm not in lseen:
+            # print(perm, getdists(perm))
+            if getdists(perm) == 0:
+                # print("done")
+                return perm
+                # exit(1)
             else:
-                return curr  # if it is the answer then return it and stop immediately
-                exit(1)  # don't know what the actual exit function is
+                return evalhillclimb(perm)
 
 
-# this one is mostly the same as before, but the sorting happens on all of L instead of only curr's children
-def bestfirst(L, final):
-    Lseen = {}  # list of already checked states
-    curr = list(sorted(L))[0]  # the first element in the sorted L
-    for i in L:
-        if i not in Lseen:
-            if curr != final:
-                Lseen.update(curr)
-                L.update(CreateChildren(curr))
-                L.pop(curr)
-                hillclimb(L, final)
-            else:
-                return curr
-                exit(1)
+print("final answer:", evalhillclimb(scrambledword))
+print("final LSeen: ", lseen)
