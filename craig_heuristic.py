@@ -2,8 +2,9 @@ from queue import PriorityQueue
 import numpy as np
 import itertools
 from itertools import product
+from random import randint
 
-unique_val = [1,2,3]
+unique_val = []
 INITIAL_1 = (3, 0)
 INITIAL_2 = (0, 0)
 INITIAL_3 = (1, 1)
@@ -19,38 +20,21 @@ class State(object):
 				self.children = []
 				self.start = start
 				self.goal = goal
-				
+
 		def compareStates(self, goal = 0):
 			goal = self.goal
 			if self.start.all() == goal.all():
 				return True
 
-		def GetDist(self):
-				dist_list = []  # empty list. will hold distances between 2 points on flow-free board
-				# find unique values on board (ex: 1, 2, 3)
-				# ignores 0, which symbolizes empty spaces
-				for sublist in self.start:
-						for val in sublist:
-								if val not in unique_val:
-										unique_val.append(val)
-						unique_val.remove(0)
-				# for unique_values, finds coordinates for each pair of unique values
-				for i in unique_val:
-						coord = np.where(self.start == i)
-						coord = np.asarray(coord).T.tolist()
-						# print(coord, 'COORD')
-						# counts number of vertical steps (rows)
-						x_val = abs(coord[0][0] - coord[1][0])
-						# counts number of horizontal steps (columns)
-						y_val = abs(coord[0][1] - coord[1][1])
-						# calculates total distance
-						distance = y_val + x_val
-						# appends distances to list
-						dist_list.append(distance)
-				return dist_list, unique_val
-
-		# starter = dist_list.index(min(dist_list)) + 1
-		# print(starter)
+		def makePlayers(self):
+			# find unique values on board (ex: 1, 2, 3)
+			# ignores 0, which symbolizes empty spaces
+			for sublist in self.start:
+				for val in sublist:
+					if val not in unique_val:
+						unique_val.append(val)
+				unique_val.remove(0)
+			return unique_val
 
 		def isSafe(self, point):
 				# The board being the matrix
@@ -66,23 +50,29 @@ class State(object):
 
 		def GetDistPerm(self, perm):
 			dist_list = []
+			sum_list = []
 			for i in range(len(perm)):
 				for k in range(len(unique_val)):
-					print(perm[i][k], 'vghvhghvhhgvh')
-					print(FINAL_POINTS[k][0], "FINAL POINTS K 0")
+					#print(perm[i][k], 'vghvhghvhhgvh')
+					#print(FINAL_POINTS[k][0], "FINAL POINTS K 0")
 					x_val = abs(perm[i][k][0] - FINAL_POINTS[k][0])
+					#print(perm[i][k][0], 'permIK0')
+					#print(x_val, 'X VAL')
 					# counts number of horizontal steps (columns)
 					y_val = abs(perm[i][k][1] - FINAL_POINTS[k][1])
+					#print(perm[i][k][1], 'permIK1')
+					#print(y_val, 'Y VAL')
 					# calculates total distance
 					distance = y_val + x_val
 					# appends distances to list
 					dist_list.append(distance)
-			return dist_list
-			
-		# Need to figure out this. All it does it makes it starts with 3
-		def eval_function(self, perm):
-			self.GetDistPerm(perm)
-				
+
+			j=0
+			while j < len(dist_list):
+				sum_list.append(sum(dist_list[j:j+3]))
+				j+=3
+
+			return sum_list #Returns the distance of every board, so [6,6] the first 6 is distance of board 1 and the other of board 2
 
 		def neighbors(self, index):
 				print('The point is at: ', index)
@@ -124,12 +114,12 @@ class State(object):
 								if pair_points[i][0][k] not in FINAL_POINTS:
 										points_to_move_with.append(pair_points[i][0][k])
 								# pair_points[i][0][k].append(points_to_go_to)
-				
+
 				tupled = list()
 				for lk in range(len(points_to_move_with)):
 					tupled.append(tuple(points_to_move_with[lk]))
 				print(tupled, "_points2__")
-		
+
 				return tupled
 
 
@@ -138,30 +128,36 @@ class State(object):
 			# ELIMINATE MOVES THAT WOULD MOVE 2 NUMBERS TO THE SAME BLOCK
 			# Store legal moves in list names "perm". Perm stands for "permutation".
 			perm = []
+			boardKey_distVal = dict()
 			for k in range(0, len(combos)):
 					if combos[k][0] != combos[k][1] and combos[k][0] != combos[k][2] and combos[k][1] != combos[k][2]:
 							perm.append(combos[k])
 			print(perm, "perm")
-			print(self.GetDistPerm(perm), "DIST LIST")
-			
+			#testinger = self.GetDistPerm(perm)
+			distances_of_points_on_boards = self.GetDistPerm(perm) #The list of the distances!
+			#print(distances_of_points_on_boards)
+			#print(testinger[0:3], 'testinger123')
+			#print(testinger[3:6], 'testinger456')
+
 			# THE CODE DOWN HERE IS NOW FINISHED
 			i = 0
 			while i < len(perm):
 				temp = self.start.copy()
-				print(temp, 'absolute board is the passed in')		
+				#print(temp, 'absolute board is the passed in')
 				temp[perm[i][0][0]][perm[i][0][1]] = 1
 				temp[perm[i][1][0]][perm[i][1][1]] = 2
 				temp[perm[i][2][0]][perm[i][2][1]] = 3
 				print(temp, 'absolute after the changes')
 				self.children.append(temp)
-				print(self.children)
+				#print(self.children)
 				i = i+1
 
 			#Need to convert the list back to numpy array
 			npp = np.asarray(self.children)
-			return npp
-			
-			
+
+			return npp, distances_of_points_on_boards
+
+
 		# player 1 start is (0,0) --> 2,1
 		def CreateChildren(self):
 				# 1- get the players that can move, i.e., not the end state
@@ -182,7 +178,7 @@ class State(object):
 						print(pair_points[i - 1][0], 'FOR PLAYER', i)
 
 				#[x,y] not (x,y)
-				
+
 				print(pair_points, 'pair points!!!')
 				# Converts the points to indices which can then be passed on to the getNeighbors function and return the neighbors in order to determine children.
 				res = self.getIndices(pair_points)  # players/indices that can be moved
@@ -193,67 +189,82 @@ class State(object):
 						moves = self.removeCheats(neigh_list, res[j])
 						parent_child.update({res[j]: moves})
 				print(parent_child, 'parent child')
+
+				children_boards, distances = self.allPossibleBoards(parent_child)
 				
-				children_boards = self.allPossibleBoards(parent_child)
-				
-				#Using only to see the boards				
+
+				#Using only to see the boards
 				for i in range(0, len(children_boards)):
 					print('\n', 'Board', i+1, '\n', children_boards[i], end = " ", flush=True)
+					print('Their distances', distances[i])
 					print('\n')
 
-				
-				return children_boards
+
+				return children_boards, distances
 
 class HillSolver: #EVAL FUNCTION SHOULD BE IN THIS CLASS BECAUSE IT IS DIFFERENT FOR EVERY ALGORITHM!
 
 		#Eval function: based of list of heruistics assign numers to each board where a high number means a better bord
 		#Make sure the Lseen stuff for the points
 		#If it finds a solution but not all the blocks are filled in, go back and pick another way. HAS to match the anser!! Yeah you connected them, but you used the wrong formula.
-		
-		
+
+
 		def __init__(self, start, goal):
 				self.path = [] #this self.path should include the intial board and the children it chooses to go to.
 				self.start = start
 				self.goal = goal
 
+
+		def evaluate(self):
+			return randint(0, 10)			
+			
+		def HillClimbing(self):
+			starting_state = State(self.start, self.goal)
+			players = starting_state.makePlayers()
+			#current = boards #the current state are the boards that are passed in
+			expanded_states = 0
+			viewed_states = 0
+			while True:
+				next_states, distances = starting_state.CreateChildren()
+				if len(next_states) == 0:
+					break
+				else:
+					best_next = next_states[0]
+					for state in next_states:
+						if self.evaluate(next_states[state]) > self.evaluate(best_next):
+							best_next = next_states[state]
+					starting_state = next_states
+			
+			
 		def solve(self):
+
+				#Call makePlayers to get the number of distinct values
+				#getDist would take in unique_val
+				#Call CreateChildren() to make the children_boards
+				#Here, get the distances of each board using GetDist
+				#Have an eval function that chooses which board to make children for
+				#Continue
+
 				L_seen = list()
 				self.path.append(self.start)
-				initialState = State(self.start, self.goal)  # 0 because not a parent
-				#print(initialState.GetDist(), 'IS GET DIST')  # returns [3,4,2] - the distances of 1,2,3 respectively
-
-				# initial_mover = initialState.eval_function(distances, self.start)
-
-				# After this, it should all be to create childre. So createChildren() should call all the other functions.
-				# print('initial mover: ', initial_mover)
-
-				'''neighbor_list = list(initialState.neighbors(INITIAL_3))
-				print(neighbor_list)
-				moves = initialState.removeCheats(self.start, neighbor_list, INITIAL_3)
-				print('Available moves are: ', moves)
-				point_chosen = moves[1]'''
+				self.HillClimbing()
 				
-				# After creating the children, should make the function to choose based on the distances and other crap that I forgot. But basically, start implementing the algorithms I think.
+				#initialState = State(self.start, self.goal)  # 0 because not a parent
+				#players = initialState.makePlayers()
+				#children_boards, distances = initialState.CreateChildren()
 
-				children_boards = initialState.CreateChildren()
-		
+				#Call the eval() function from here
+				#self.HillClimbing(children_boards)
+				
+				
+				
+				
 				#How to add to L seen
-				L_seen.append(np.asarray(self.start).T.tolist())
-
+				
+				#L_seen.append(np.asarray(self.start).T.tolist())
 
 				#LSEEN would have the points it started on. So automatically add the points when the board is passed in
-				#
 
-				
-				#Need to update functions to include Lseen so that it doesn't look at distances or go back to the initial spots again.
-				#nextState = State(self.start, 0, children_boards[1], self.goal)
-				#distances, players = nextState.GetDist(children_boards[1])
-				#print(distances)
-				#print(children_boards[0])
-				
-				#testing = State(self.start, 0, children_boards[0], self.goal)
-				#testing2 = testing.CreateChildren(children_boards[1])
-				
 				'''if initialState.isSafe(self.start, moves[1]) == True:
 						print('Valid')
 				else:
@@ -261,15 +272,12 @@ class HillSolver: #EVAL FUNCTION SHOULD BE IN THIS CLASS BECAUSE IT IS DIFFERENT
 
 
 
-				#print(parent_child_dict)
-
-
 if __name__ == '__main__':
 		HillStart = np.array([[1, 2, 0, 0],
 													[0, 3, 0, 0],
 													[0, 1, 3, 0],
 													[2, 0, 0, 0]])
-												
+
 
 		HillGoal = np.array([[1, 2, 2, 2],
 												[1, 3, 3, 2],
