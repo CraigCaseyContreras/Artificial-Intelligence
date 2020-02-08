@@ -2,6 +2,7 @@ from queue import PriorityQueue
 import numpy as np
 import itertools
 from itertools import product
+from random import randint
 
 unique_val = []
 INITIAL_1 = (3, 0)
@@ -72,11 +73,6 @@ class State(object):
 				j+=3
 
 			return sum_list #Returns the distance of every board, so [6,6] the first 6 is distance of board 1 and the other of board 2
-
-		# Need to figure out this. All it does it makes it starts with 3
-		def eval_function(self, perm):
-			self.GetDistPerm(perm)
-
 
 		def neighbors(self, index):
 				print('The point is at: ', index)
@@ -159,17 +155,7 @@ class State(object):
 			#Need to convert the list back to numpy array
 			npp = np.asarray(self.children)
 
-
-			'''j=0
-			while j <len(npp):
-				print(npp[j], 'nppi', type(npp))
-				print(distances_of_points_on_boards[j], 'btds', type(distances_of_points_on_boards))
-				boardKey_distVal[npp[j].flatten()] = distances_of_points_on_boards[j]
-
-				j+=1
-			print(boardKey_distVal)'''
-
-			return npp
+			return npp, distances_of_points_on_boards
 
 
 		# player 1 start is (0,0) --> 2,1
@@ -204,15 +190,17 @@ class State(object):
 						parent_child.update({res[j]: moves})
 				print(parent_child, 'parent child')
 
-				children_boards = self.allPossibleBoards(parent_child)
+				children_boards, distances = self.allPossibleBoards(parent_child)
+				
 
 				#Using only to see the boards
 				for i in range(0, len(children_boards)):
 					print('\n', 'Board', i+1, '\n', children_boards[i], end = " ", flush=True)
+					print('Their distances', distances[i])
 					print('\n')
 
 
-				return children_boards
+				return children_boards, distances
 
 class HillSolver: #EVAL FUNCTION SHOULD BE IN THIS CLASS BECAUSE IT IS DIFFERENT FOR EVERY ALGORITHM!
 
@@ -226,6 +214,28 @@ class HillSolver: #EVAL FUNCTION SHOULD BE IN THIS CLASS BECAUSE IT IS DIFFERENT
 				self.start = start
 				self.goal = goal
 
+
+		def evaluate(self):
+			return randint(0, 10)			
+			
+		def HillClimbing(self):
+			starting_state = State(self.start, self.goal)
+			players = starting_state.makePlayers()
+			#current = boards #the current state are the boards that are passed in
+			expanded_states = 0
+			viewed_states = 0
+			while True:
+				next_states, distances = starting_state.CreateChildren()
+				if len(next_states) == 0:
+					break
+				else:
+					best_next = next_states[0]
+					for state in next_states:
+						if self.evaluate(next_states[state]) > self.evaluate(best_next):
+							best_next = next_states[state]
+					starting_state = next_states
+			
+			
 		def solve(self):
 
 				#Call makePlayers to get the number of distinct values
@@ -237,12 +247,22 @@ class HillSolver: #EVAL FUNCTION SHOULD BE IN THIS CLASS BECAUSE IT IS DIFFERENT
 
 				L_seen = list()
 				self.path.append(self.start)
-				initialState = State(self.start, self.goal)  # 0 because not a parent
-				players = initialState.makePlayers()
-				children_boards = initialState.CreateChildren()
+				self.HillClimbing()
+				
+				#initialState = State(self.start, self.goal)  # 0 because not a parent
+				#players = initialState.makePlayers()
+				#children_boards, distances = initialState.CreateChildren()
 
+				#Call the eval() function from here
+				#self.HillClimbing(children_boards)
+				
+				
+				
+				
 				#How to add to L seen
-				L_seen.append(np.asarray(self.start).T.tolist())
+				
+				#L_seen.append(np.asarray(self.start).T.tolist())
+
 				#LSEEN would have the points it started on. So automatically add the points when the board is passed in
 
 				'''if initialState.isSafe(self.start, moves[1]) == True:
