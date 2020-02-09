@@ -50,8 +50,8 @@ class StringState(State):
 				distance += abs(i - self.value.index(letter))
 			except:
 				distance += abs(i - self.value.find(letter))
-		print(self.value, 'has a distance of: ', distance+2)  
-		return distance +2
+		print(self.value, 'has a distance of: ', distance)  
+		return distance 
 		
    	
 	def CreateChildren(self):
@@ -65,12 +65,41 @@ class StringState(State):
 				#Store the value we generated in the child
 				child = StringState(val, self)
 				self.children.append(child)
+				#print(self.children, 'self children')
+				
 		print('---------------------------')
 		print('---------------------------')
-		print('---------------------------')
-		print('---------------------------')
-		print('---------------------------')
-   			
+		#print('---------------------------')
+		#print('---------------------------')
+		#print('---------------------------')
+
+
+class HillSolver():
+	def __init__(self, start, goal):
+		self.start = start
+		self.goal = goal
+		
+		
+	def solve(self):
+		L_seen = []
+		print('Solve from hillsover')
+		L_seen.append(self.start)
+		
+		startState = StringState(self.start, 0, self.start, self.goal)
+		startState.CreateChildren()
+		#print(startState.children) #scrambled word
+		
+		for child in startState.children:
+			if child.value not in L_seen:
+				if child.GetDist() == 0:
+					return child.value
+				else:
+					return self.solve()
+				
+		print(L_seen)
+			
+		
+		
 class AStar_Solver:
 	def __init__(self, start , goal):
 		self.path          = []
@@ -80,12 +109,14 @@ class AStar_Solver:
 		self.goal          = goal
 
 	def Solve(self):
+		print('Solve from A solver')
 		startState = StringState(self.start,
 											0,
 											self.start,
 											self.goal)
 
 		count = 0
+		i = 0
 		#A tuple. Every state is held in startState
 		self.priorityQueue.put((0,count,startState))
 
@@ -93,24 +124,31 @@ class AStar_Solver:
 		while(not self.path and self.priorityQueue.qsize()):
 				#Equal to the StartState so the 2 slot of (0,count,startState)
 				closestChild = self.priorityQueue.get()[2]
+				print(closestChild.__dict__, 'closeChild')
+				
 				
 				#Makes the children for that states
 				closestChild.CreateChildren()
 				
 				#Add child to visited queue
+				print(closestChild.value, 'closest child val')
 				self.visitedQueue.append(closestChild.value)
 
 				#Go through each child that was created for that state
 				for child in closestChild.children:
 					#if the child has not been visited OR if the child's value is not in the visited queue
 					if child.value not in self.visitedQueue:
-						count +=1
+						i +=1
 						#If the distance is at 0 and does not exist
+						
 						if not child.dist:
 								self.path = child.path
+								
 								break
 						
-						self.priorityQueue.put((child.dist,count,child))
+						self.priorityQueue.put((child.dist,i,child))
+						#print(count)
+				
 		self.visitedQueue.append(self.goal)
 		print(self.visitedQueue, 'visited queue')
 		if not self.path:
@@ -119,11 +157,33 @@ class AStar_Solver:
 		return self.path
 			
 if __name__ == "__main__":
-	start1 = "110110"
-	goal1  = "010111"
+	
+	def scramble(unscrambled):
+		''' 
+		Scrambles the word(s) in unscrambled such that the first and last letter remain the same,
+		but the inner letters are scrambled. Preserves the punctuation.
+		See also: http://science.slashdot.org/story/03/09/15/2227256/can-you-raed-tihs
+		'''
+		import string, random, re
+		splitter = re.compile(r'\s')
+		words = splitter.split(u''.join(ch for ch in unscrambled if ch not in set(string.punctuation)))
+		for word in words:
+			if len(word) < 4: continue
+			mid = list(word[1:-1])
+			random.shuffle(mid)
+			scrambled = u'%c%s%c' % (word[0], ''.join(mid), word[-1])
+			unscrambled = unscrambled.replace(word, scrambled, 1)
+    
+		return unscrambled
+	
+	goal1 = "abcde"
+	start11 = scramble(goal1)
 	print("Starting...")
 
-	start_time = time.time()
-	a = AStar_Solver(start1, goal1)
-	print("--- %s seconds ---" % (time.time() - start_time))
-	a.Solve()
+	#start_time = time.time()
+	#a = AStar_Solver(start11, goal1)
+	#a.Solve()
+	#print("--- %s seconds ---" % (time.time() - start_time))
+	
+	b = HillSolver(start11, goal1)
+	b.solve()

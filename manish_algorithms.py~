@@ -31,7 +31,7 @@ def evalhillclimb(cw):
     lseen.append(cw)
     sortedlist = sorted(list(createchildren(cw)), key=getdists)
     #print("LSeen: ", lseen)
-    print("list of permutations: ", sortedlist)
+    # print("list of permutations: ", sortedlist)
     print(sortedlist,'sorted list')
     for perm in sortedlist:
         if perm not in lseen:
