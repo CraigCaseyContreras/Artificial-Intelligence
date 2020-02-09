@@ -128,7 +128,7 @@ class AStar_Solver:
 						#print(count)
 				
 		self.visitedQueue.append(self.goal)
-		print(self.visitedQueue, 'visited queue')
+		print(self.visitedQueue, 'visited queue of length', len(self.visitedQueue))
 		if not self.path:
 				print("Goal of %s is not possible!" % (self.goal))
 
@@ -155,7 +155,7 @@ if __name__ == "__main__":
 		return unscrambled
 	
 	goal1 = "Craythorne34"
-	start11 = scramble(goal1)
+	start11 = 'Cehn3roatry4'#scramble(goal1)
 	print("Starting...")
 
 	start_time = time.time()

@@ -215,24 +215,57 @@ class HillSolver: #EVAL FUNCTION SHOULD BE IN THIS CLASS BECAUSE IT IS DIFFERENT
 				self.goal = goal
 
 
-		def evaluate(self):
-			return randint(0, 10)			
+		def evaluate(self, test):
+			tester = randint(0,10)
+			print(tester, 'asdasdasdasd')
+			return tester		
 			
 		def HillClimbing(self):
 			starting_state = State(self.start, self.goal)
+			
+			#print(starting_state, 'sstatatt')
 			players = starting_state.makePlayers()
 			#current = boards #the current state are the boards that are passed in
-			expanded_states = 0
-			viewed_states = 0
+			#expanded_states = 0
+			#viewed_states = 0
+			#next_states, next_distances = starting_state.CreateChildren()
+			
+			#starting_state = next_states[0]
+			#starting_state = State(next_states[0], self.goal)
+			#players = starting_state.makePlayers()
+			#next_states = starting_state.CreateChildren()
+			#while True:
+				#next_states, next_distances = starting_state.CreateChildren()
+				
+			
 			while True:
-				next_states, distances = starting_state.CreateChildren()
+				next_states, next_distances = starting_state.CreateChildren() #returns the two children at first
 				if len(next_states) == 0:
+					print('no next children')
 					break
 				else:
+					best_next_state = next_states[0] # best next is the first child
+					for i in range(len(next_states)): #i = 0,1
+						print(next_states[i], 'next state i')
+						print(best_next_state, 'best next ')
+						if (self.evaluate(next_states[i]) < self.evaluate(best_next_state)): #if the distance of the first child is > than the value of the best next state							
+							print('next state < best next state')							
+							best_next_state = next_states[i] #Make the best next the next state, which has a lesser value
+						elif (self.evaluate(next_states[i]) > self.evaluate(best_next_state)):
+							print('next state > best next state')							
+							
+					print(best_next_state, 'THIS IS THE BEST NEXT STATE')
+					starting_state = State(best_next_state, self.goal)
+					
+				'''else:
 					best_next = next_states[0]
-					for state in next_states:
-						print(state, 'state!!')
-			
+					for state in range(len(next_states)):
+						if self.evaluate(next_states[state]) > self.evaluate(best_next):
+							
+						#if self.evaluate(next_states[state]) > self.evaluate(best_next):
+							best_next = next_states[state]
+					starting_state = next_states
+			'''
 			
 		def solve(self):
 
@@ -245,6 +278,7 @@ class HillSolver: #EVAL FUNCTION SHOULD BE IN THIS CLASS BECAUSE IT IS DIFFERENT
 
 				L_seen = list()
 				self.path.append(self.start)
+
 				self.HillClimbing()
 				
 				#initialState = State(self.start, self.goal)  # 0 because not a parent
@@ -272,8 +306,8 @@ class HillSolver: #EVAL FUNCTION SHOULD BE IN THIS CLASS BECAUSE IT IS DIFFERENT
 
 if __name__ == '__main__':
 		HillStart = np.array([[1, 2, 0, 0],
-													[0, 3, 0, 0],
-													[0, 1, 3, 0],
+													[0, 0, 0, 0],
+													[0, 1, 0, 0],
 													[2, 0, 0, 0]])
 
 

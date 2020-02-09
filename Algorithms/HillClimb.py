@@ -30,8 +30,8 @@ def evalhillclimb(cw):
 		lseen.append(cw)
 		sortedlist = sorted(list(createchildren(cw)), key=getdists)
 		#print("LSeen: ", lseen)
-		print("list of permutations: ", sortedlist)
-		print(sortedlist,'sorted list')
+		#print("list of permutations: ", sortedlist)
+		#print(sortedlist,'sorted list')
 		for perm in sortedlist:
 				if perm not in lseen:
 						# print(perm, getdists(perm))
@@ -44,4 +44,4 @@ def evalhillclimb(cw):
 
 
 print("final answer:", evalhillclimb(scrambledword))
-print("final LSeen: ", lseen)
+print("final LSeen: ", lseen, 'of length', len(lseen))
