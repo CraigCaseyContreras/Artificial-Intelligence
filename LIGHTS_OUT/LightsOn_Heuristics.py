@@ -15,6 +15,7 @@ import heapq
 import queue as Q
 import operator
 import math
+import time
 
 L = []
 L_dict = {}
@@ -79,11 +80,11 @@ class SearchAI:
         # After initial move, currentArray = best child.
         # best_child = ''
         Lseen.append(self.convert2str(currentArray, numRows, numColumns))
-        print(Lseen, 'L Seen')
-        print(len(Lseen), 'number of moves made')
+        # print(Lseen, 'L Seen')
+        # print(len(Lseen), 'number of moves made')
 
         # L_dict tracks ALL unseen children at all tiers. Useful for best first
-        print(L_dict, "L_dict AT START EVAL")
+        # print(L_dict, "L_dict AT START EVAL")
 
         # GENERATE NEW CHILDREN AND ACTIONS
         childs, action = self.toggle(currentArray, numRows, numColumns)
@@ -106,7 +107,9 @@ class SearchAI:
             if j not in Lseen:
                 # if child is not the goal...
                 if j == goal:
-                    print("DONE IN EVAL FXT")
+                    # print("DONE IN EVAL FXT")
+                    print('L Seen: ', Lseen)
+                    print('number of moves: ', len(Lseen))
                     Lseen.clear()
                     L_dict.clear()
                     L_tier.clear()
@@ -114,7 +117,7 @@ class SearchAI:
                     actions_2.clear()
                     return goal, goal
 
-                print(j, "JJJJJJJJJJJJJJJJJJJJJJJJJ")
+                # print(j, "JJJJJJJJJJJJJJJJJJJJJJJJJ")
                 # Sum all ones in child
                 summa = self.sumStr(j)
 
@@ -123,24 +126,24 @@ class SearchAI:
 
                 # L DICT = ALL UNSEEN CHILDREN
                 L_dict.update({j: summa})
-                print(L_tier, "LTIERLTIERLTIER")
-                print(L_dict, "LDICTLDICTLDICT")
+                # print(L_tier, "LTIERLTIERLTIER")
+                # print(L_dict, "LDICTLDICTLDICT")
 
                 # beginning of look ahead function...
-                next_childs, next_action = self.toggle(self.getArray(
-                    j, numColumns, numColumns), numRows, numColumns)
-                # max dictionary value
-                for k in next_childs:
-                    k = self.convert2str(k, numRows, numColumns)
-                    summb = self.sumStr(k)
-                    next_L_tier.update({k: summb})
-                max_tier_value = max(next_L_tier.values())
-                L_tier.update({j: max_tier_value})
-                L_dict.update({j: max_tier_value})
+                # next_childs, next_action = self.toggle(self.getArray(
+                #     j, numColumns, numColumns), numRows, numColumns)
+                # # max dictionary value
+                # for k in next_childs:
+                #     k = self.convert2str(k, numRows, numColumns)
+                #     summb = self.sumStr(k)
+                #     next_L_tier.update({k: summb})
+                # max_tier_value = max(next_L_tier.values())
+                # L_tier.update({j: max_tier_value})
+                # L_dict.update({j: max_tier_value})
                 # ...end of look ahead function
 
-            print(L_tier, "UNSEEN CHILDREN IN THE LEVEL")
-            print(L_dict, 'ALL UNSEEN CHILDREN')
+            # print(L_tier, "UNSEEN CHILDREN IN THE LEVEL")
+            # print(L_dict, 'ALL UNSEEN CHILDREN')
 
         # if algorithm Hill Climbing
         if algorithm == "Hill":
@@ -152,14 +155,14 @@ class SearchAI:
             # IF MORE THAN ONE KEY, pick key randomly...
             if len(max_keys) == 1:
                 best_child = max_keys[0]
-                print(best_child, "BEST CHILD ONLY CHILD")
+                # print(best_child, "BEST CHILD ONLY CHILD")
             else:
                 best_child = random.choice(max_keys)
-                print(best_child, "BEST CHILD CHOSEN RANDOMLY")
+                # print(best_child, "BEST CHILD CHOSEN RANDOMLY")
             # gets index in childs list of best child
             # uses that index to select the correct action to add to actionlist
-            print(childs, "CHILDSSSSSSSSS")
-            print(action, "ACTIONNSSSSSSSS")
+            # print(childs, "CHILDSSSSSSSSS")
+            # print(action, "ACTIONNSSSSSSSS")
             index = childs.index(best_child)
             actionlist.append(action[index])
 
@@ -173,16 +176,16 @@ class SearchAI:
             # IF MORE THAN ONE KEY, pick key randomly...
             if len(max_keys) == 1:
                 best_child = max_keys[0]
-                print(best_child, "BEST CHILD")
+                # print(best_child, "BEST CHILD")
             else:
                 best_child = random.choice(max_keys)
-                print(best_child, "BEST CHILD CHOSEN RANDOMLY")
+                # print(best_child, "BEST CHILD CHOSEN RANDOMLY")
             # gets index in childs list of best child
             # uses that index to select the correct action to add to actionlist
             index = flat_all_childs.index(best_child)
             actionlist.append(flat_all_actions[index])
 
-        print(best_child, "Best Child EVAL")
+        # print(best_child, "Best Child EVAL")
         # deletes best child from L_dict
         del L_dict[best_child]
 
@@ -194,11 +197,11 @@ class SearchAI:
     def hillClimbing(self, Istate, goal, numRows, numColumns):
         print("**************************************************************")
         print('-------------------- HILL CLIMBING ------------------------')
-        print('-------------------- HILL CLIMBING ------------------------')
-        print('-------------------- HILL CLIMBING ------------------------')
-        print('-------------------- HILL CLIMBING ------------------------')
+        # print('-------------------- HILL CLIMBING ------------------------')
+        # print('-------------------- HILL CLIMBING ------------------------')
+        # print('-------------------- HILL CLIMBING ------------------------')
         print("**************************************************************")
-        Lseen = []
+        # Lseen = []
         # set currentArray equal to initial state
         currentArray = self.getArray(Istate, numRows, numColumns)
         # set flag = 0 for while loop
@@ -211,11 +214,11 @@ class SearchAI:
 
             # update currentArray wit best child
             currentArray = self.getArray(best_child, numRows, numColumns)
-            print("CHOSEN ACTIONS: ", actionlist)
-            print('BEST CHILDREN: ', best_child)
-            print('-------------------------------')
-            print('-------------------------------')
-            print('-------------------------------')
+            # print("CHOSEN ACTIONS: ", actionlist)
+            # print('BEST CHILDREN: ', best_child)
+            # print('-------------------------------')
+            # print('-------------------------------')
+            # print('-------------------------------')
             # if we reach the goal, END
             if best_child == goal:
                 break
@@ -223,9 +226,9 @@ class SearchAI:
     def best_first_search(self, Istate, goal, numRows, numColumns):
         print("**************************************************************")
         print('-------------------- START BEST FIRST ------------------------')
-        print('-------------------- START BEST FIRST ------------------------')
-        print('-------------------- START BEST FIRST ------------------------')
-        print('-------------------- START BEST FIRST ------------------------')
+        # print('-------------------- START BEST FIRST ------------------------')
+        # print('-------------------- START BEST FIRST ------------------------')
+        # print('-------------------- START BEST FIRST ------------------------')
         print("**************************************************************")
         # set currentArray equal to initial state
         currentArray = self.getArray(Istate, numRows, numColumns)
@@ -239,21 +242,26 @@ class SearchAI:
 
             # update currentArray wit best child
             currentArray = self.getArray(best_child, numRows, numColumns)
-            print("CHOSEN ACTIONS: ", actionlist)
-            print('BEST CHILDREN: ', best_child)
-            print('-------------------------------')
-            print('-------------------------------')
-            print('-------------------------------')
+            # print("CHOSEN ACTIONS: ", actionlist)
+            # print('BEST CHILDREN: ', best_child)
+            # print('-------------------------------')
+            # print('-------------------------------')
+            # print('-------------------------------')
             # if we reach the goal, END
             if best_child == goal:
                 break
 
 
 if __name__ == '__main__':
+        # From the YT Video. Should have a solution but we get errors??
+        #start = '110100010'
+        #goal = '000000000'
     start = '0000000000000000'
     goal = '1111111111111111'
-    numRows = int(math.sqrt(len(start)))
-    numColumns = numRows
+    numRows = 4  # int(math.sqrt(len(start)))
+    numColumns = 4  # numRows
+    start_time = time.time()
     SearchAI = SearchAI(start, goal, numRows, numColumns)
     SearchAI.hillClimbing(start, goal, numRows, numColumns)
     # SearchAI.best_first_search(start, goal, numRows, numColumns)
+    print("--- %s seconds ---" % (time.time() - start_time))
