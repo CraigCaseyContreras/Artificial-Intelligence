@@ -9,16 +9,15 @@ class SearchAI:
         self.goal_state = goal_state
 
     ## This function finds for the child states
-    def toggle(self, parent_state, numRows, numColumns):
+    def create_children(self, parent_state, numRows, numColumns):
         temp_state = np.copy(parent_state)
         child_states = []
         action = list()
         for i in range(numRows):
             for j in range(numColumns):
                 temp_state[i, :] = np.logical_not(parent_state[i, :])
-                # pdb.set_trace()
                 temp_state[:, j] = np.logical_not(parent_state[:, j])
-                # pdb.set_trace()
+
                 child_states.append(temp_state)
                 temp_state = np.copy(parent_state)
                 action.append([i, j])
@@ -75,17 +74,7 @@ class SearchAI:
             print('---------')
             self.printState(state, numRows, numColumns)
 
-    # def breadth_search(self, Istate=None, goal_state=None, numRows=None, numColumns=None):
     def breadth_search(self, Istate, goal_state, numRows, numColumns):
-        # if Istate == None:
-        #     Istate = self.Istate
-        # if numRows == None:
-        #     numRows = self.numRows
-        # if numColumns == None:
-        #     numColumns = self.numCols
-        # if goal_state == None:
-        #     goal_state = self.goal_state
-
         ## 2-Create Lseen and L
         Lseen = set()
         L = list()
@@ -145,17 +134,6 @@ class SearchAI:
                 L.remove(currentState)
         return action_list
 
-
-def main():
-    # numRows = 5
-    # numCols = 5
-    # if len(sys.argv) > 2:
-    #     numRows = int(sys.argv[1])
-    #     numCols = int(sys.argv[2])
-    # else:
-    SearchAI('0000', '1111', 2, 2)
-    SearchAI.breadth_search()
-
-
 if __name__ == '__main__':
-    main()
+	SearchAI = SearchAI('0000', '1111', 2,2)
+	SearchAI.breadth_search()

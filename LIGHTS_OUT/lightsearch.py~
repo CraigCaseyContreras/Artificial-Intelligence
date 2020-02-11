@@ -151,9 +151,8 @@ class SearchAI:
 				Lseen.append(self.getState(child_to_go_to, numRows, numColumns))
 				print(Lseen, 'LSEEEEN')
 				print(self.getState(child_to_go_to, numRows, numColumns), 'gfdfggfdgd')
-				myL.remove(self.getState(child_to_go_to, numRows, numColumns))
 				print(myL, 'MYYYYL')				
-			
+				myL.remove(self.getState(child_to_go_to, numRows, numColumns))
 				
 				currentArray = child_to_go_to
 				print('-------------------------------')
