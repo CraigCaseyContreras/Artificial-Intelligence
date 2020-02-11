@@ -41,5 +41,11 @@ def evalhillclimb(cw):
                 return evalhillclimb(perm)
 
 
-print("final answer:", evalhillclimb(scrambledword))
-print("final LSeen: ", lseen)
+def bestfirst(cw):
+    L = [cw]
+    print(L)
+
+
+# print("final answer:", evalhillclimb(scrambledword))
+# print("final LSeen: ", lseen)
+print(bestfirst(scrambledword))
