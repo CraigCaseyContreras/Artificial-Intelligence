@@ -198,6 +198,8 @@ class SearchAI:
 				print('-------------------------------')
 				# if we reach the goal, END
 				if best_child == goal:
+					print('REACHED!')
+					return goal
 					#print('NUMBER OF MOVES: ', len(Lseen))
 					break
 			
@@ -237,12 +239,12 @@ if __name__ == '__main__':
 	#From the YT Video. Should have a solution but we get errors??
 	#start = '110100010'
 	#goal = '000000000'
-	start = '0000'
-	goal = '1111'
-	numRows = 2 #int(math.sqrt(len(start)))
-	numColumns = 2 # numRows
+	start = '100100000'
+	goal = '111111111'
+	numRows = 3 #int(math.sqrt(len(start)))
+	numColumns = 3 # numRows
 	start_time = time.time()
 	SearchAI = SearchAI(start, goal, numRows,numColumns)
-	SearchAI.hillClimbing(start, goal, numRows,numColumns)
+	#SearchAI.hillClimbing(start, goal, numRows,numColumns)
+	SearchAI.best_first_search(start, goal, numRows,numColumns)
 	print("--- %s seconds ---" % (time.time() - start_time))
-	#SearchAI.best_first_search(start, goal, numRows,numColumns)
