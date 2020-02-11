@@ -239,7 +239,7 @@ if __name__ == '__main__':
 	#From the YT Video. Should have a solution but we get errors??
 	#start = '110100010'
 	#goal = '000000000'
-	start = '100100000'
+	start = '000000000'
 	goal = '111111111'
 	numRows = 3 #int(math.sqrt(len(start)))
 	numColumns = 3 # numRows
