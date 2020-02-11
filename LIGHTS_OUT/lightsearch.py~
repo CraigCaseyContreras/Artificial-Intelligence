@@ -157,12 +157,57 @@ class SearchAI:
 			#for i in range(7):
 				# make children
 				print(currentArray, "CURRENT ARRAY")
+<<<<<<< HEAD
 	
 				
 				best_child, actionlist, flag = self.evaluate(currentArray, goal, numRows, numColumns)
 				
 								
 				
+=======
+				childs, action = self.toggle(currentArray, numRows, numColumns)
+				c = list(zip(childs, action))
+				random.shuffle(c)
+				childs, action = zip(*c)
+				print(childs, "CHILDSSSSS")
+				print(action, 'ACTIONS!!')
+				for j in childs:
+					print(j, "J")
+					if self.getState(j, numRows,numColumns) not in Lseen:
+						if self.getState(j, numRows,numColumns) == goal:
+							print("FINISHHHHHHHHHHHHHHHHHHH")
+							flag = 1
+						
+						
+						print(j, "child")
+						kk = self.getState(j, numRows, numColumns)
+						print(kk, 'kkkkkkk')
+						myL.append(kk)
+							
+						#myL.append(self.getState(j, numRows, numColumns))
+						# sums row's 1 and 2 for each child
+						summa = sum(j[0] + j[1])
+						print(summa, 'sum of all the board')
+						
+						L.append([summa, j])
+						print(L, 'DAFSDFGasdgA')
+
+				#L.remove(self.getState(currentArray, numRows, numColumns))
+				Lseen.append(self.getState(currentArray, numRows, numColumns))
+          	
+				print(Lseen, 'This is L Seen')
+				indices = []
+				print(L, 'THIS IS L')
+				# pick the child with the highest value
+				for ik in range(len(L)):
+					indices.append(L[ik][0])
+					maxpos = indices.index(max(indices)) #gives the index
+				print(maxpos, 'AAAAAAAAAAAAAAAAAAAAAAAAAAA')
+            
+				#How to save the first one?
+				child_to_go_to = L[maxpos][1]
+				actionlist.append(action[maxpos+1])
+>>>>>>> 8ea4351995f5970ab70d2929870b3922eac70f69
 				print(actionlist, "SELECTED ACTIONNNNNNNNNNNNNNNNN")
 				print('Chosen child: ', best_child)
 				Lseen.append(self.getState(best_child, numRows, numColumns))
