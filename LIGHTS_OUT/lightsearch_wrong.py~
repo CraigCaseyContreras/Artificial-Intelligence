@@ -96,7 +96,7 @@ class SearchAI:
 		def evaluate(self, currentArray, goal, numRows, numColumns):
 			Lseen.append(self.getState(currentArray, numRows, numColumns))
 			print(Lseen, 'L Seen START EVAL')
-			L.pop(0)
+			L.remove(currentArray)
 			print(L, "L AT TOP")
 			childs, action = self.toggle(currentArray, numRows, numColumns)
 			c = list(zip(childs, action))
