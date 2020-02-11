@@ -16,10 +16,10 @@ import queue as Q
 
 
 class SearchAI:
-		def __init__(self,Istate,goal_state, numRows, numCols):
+		def __init__(self,Istate,goal_state, numRows, numColumns):
 				self.Istate=Istate
 				self.numRows = numRows
-				self.numCols = numCols
+				self.numColumns = numColumns
 				self.goal_state = goal_state
 		## This function finds for the child states
 		def toggle(self,parent_state, numRows, numColumns):
@@ -99,6 +99,7 @@ class SearchAI:
 			print(type(goalState), "type")
 			
 			Lseen=list()
+			actionlist = list()
 			#L.append(self.getState(currentArray,numRows,numColumns))
 			#L.append(Istate) #0000
 			#currentState = L[0]
@@ -112,10 +113,11 @@ class SearchAI:
 				print(currentArray, "CURRENT ARRAY")
 				childs, action = self.toggle(currentArray, numRows, numColumns)
 				print(childs, "CHILDSSSSS")
+				print(action, 'ACTIONS!!')
 				for j in childs:
 					print(j, "J")
 					if self.getState(j, numRows,numColumns) not in Lseen:
-						if self.getState(j, numRows,numColumns) == "1111":
+						if self.getState(j, numRows,numColumns) == goal:
 							print("FINISHHHHHHHHHHHHHHHHHHH")
 							flag = 1
 						
@@ -143,207 +145,41 @@ class SearchAI:
 				for ik in range(len(L)):
 					indices.append(L[ik][0])
 					maxpos = indices.index(max(indices)) #gives the index
-				print(maxpos)
+				print(maxpos, 'AAAAAAAAAAAAAAAAAAAAAAAAAAA')
             
 				#How to save the first one?
 				child_to_go_to = L[maxpos][1]
+				actionlist.append(action[maxpos+1])
+				print(actionlist, "SELECTED ACTIONNNNNNNNNNNNNNNNN")
 				print('Chosen child: ', child_to_go_to)
 				Lseen.append(self.getState(child_to_go_to, numRows, numColumns))
 				print(Lseen, 'LSEEEEN')
 				print(self.getState(child_to_go_to, numRows, numColumns), 'gfdfggfdgd')
-				print(myL, 'MYYYYL')				
 				myL.remove(self.getState(child_to_go_to, numRows, numColumns))
-				
+				print(myL, 'MYYYYL')				
+			
+
 				currentArray = child_to_go_to
 				print('-------------------------------')
 				print('-------------------------------')
 				print('-------------------------------')
-		'''
-		currentArray2 = child_to_go_to
-		print('Next go')
-		childs2, action2 = self.toggle(currentArray2, numRows, numColumns)
-		print(childs2)
-			
-			myList2 = []
-			for j in childs2:
-		if j not in lseen:
-			print(j)
-			summa2 = sum(j[0] + j[1])
-			print(sum(j[0]) + sum(j[1]), 'sum of all the baord')
-			#A = list(i, summa)
-			myList2.append([summa2, np.asarray(j)])
-			#(np.asarray(i).T.tolist(), np.asarray(i).T.tolist())
-			#print(type(i))
-			indices2 = []
-			print(myList2, 'my list after second go!!')
 				
-				
-			child_to_go_to2 = myList2[maxpos][1]
-			print('Chosen child: ', child_to_go_to2)
-			currentArray3 = child_to_go_to2
-			print('Next go')
-			childs3, action3 = self.toggle(currentArray3, numRows, numColumns)
-			print(childs3)
-				#heapq.heappush(h, (summa, childs[i]))
-			#print(h)
+		def best_first_search(self,Istate=None,goal_state=None,numRows=None,numColumns=None):
+				if Istate == None:
+						Istate = self.Istate
+				if numRows == None:
+						numRows = self.numRows
+				if numColumns == None:
+						numColumns = self.numColumns
+				if goal_state == None:
+						goal_state = self.goal_state
+				## 2-Create Lseen and L
+				Lseen = set()
+				L = list()
+				#self.evalHill(Istate, goal_state, numRows, numColumns)
 
-			'''
-				#myQueue.put(i, summa)
-			#print(myQueue)
-			#print(currentArray, 'current formeval!!!!')
-			#print(childs, 'childs from eval!!!!!')
-				
-		def breadth_search(self,Istate=None,goal_state=None,numRows=None,numColumns=None):
-				if Istate == None:
-						Istate = self.Istate
-				if numRows == None:
-						numRows = self.numRows
-				if numColumns == None:
-						numColumns = self.numCols
-				if goal_state == None:
-						goal_state = self.goal_state
-				## 2-Create Lseen and L
-				Lseen = set()
-				L = list()
-				self.evalHill(Istate, goal_state, numRows, numColumns)
-				## 3-Find childrens
-				#Istate = getState(np.zeros((numRows, numColumns),  dtype=int), numRows, numColumns)
-				#goal_state = getState(np.ones((numRows,numColumns), dtype=int), numRows, numColumns)
-				#goal_state = '01010101010101010101'
-				print("goal state is")
-				#print(goal_state)
-				#L.append(Istate)
-        
-				# a dictionary to maintain meta information (used for path formation)
-					# key -> (parent state, action to reach child)
-				#meta = dict()
-				#meta[Istate] = (None,None)
-				#breadth first search
-				#1.Let L be list of initial Nodes
-				#2. let n be first node in L, if L is empty set, fail
-				#3. if n is terminal state, stop
-				#4. remove n from L, add to end of L all of n's childrens randomly ordered
-				#5. Go to 2
-				'''while len(L) > 0:
-						currentState = L[0]
-						currentArray = self.getArray(currentState, numRows, numColumns)
-            
-						#print the state
-						#print("****************************")
-						#print("Current State is")
-						#self.printState(currentState, numRows, numColumns)
-						#print("****************************")
-            
-						if currentState == goal_state:
-								print('Reach goal state') 
-								print("****************************")
-								print('Winning sequence of actions:')
-								action_list=self.construct_path(currentState, meta) #Prints out the list of actions that lead to a win
-								print(action_list)
-								self.printWinningSeqState(Istate,action_list,numRows, numColumns)
-								print('print winnign state')
-								break
-						else: 
-								if currentState not in Lseen:
-										Lseen.add(currentState)
-										#print("Length of Lseen", len(Lseen))
-										childs, action = self.toggle(currentArray, numRows, numColumns)
-                    
-										c = list(zip(childs, action))
-										random.shuffle(c)
-										childs, action = zip(*c)
-										print(currentArray, 'currentArray')
-										print(childs, 'ajksndjkansdkjasnjk')
-										print(action, 'asdknasdk')
-                    
-										#random.shuffle(childs)
-										for i in range(len(childs)):
-												state = self.getState(childs[i], numRows, numColumns)
-												notInL = state not in L
-												notInLseen = state not in Lseen
-												if notInL and notInLseen:
-														L.append(state)
-														meta[state] = (currentState, action[i]) # create metadata for these nodes
-								L.remove(currentState) 
-				return action_list
-    
-		## Depth first function
-		def depth_search(self,Istate=None,goal_state=None,numRows=None,numColumns=None):
-				if Istate == None:
-						Istate = self.Istate
-				if numRows == None:
-						numRows = self.numRows
-				if numColumns == None:
-						numColumns = self.numCols
-				if goal_state == None:
-						goal_state = self.goal_state
-				## 2-Create Lseen and L
-				Lseen = set()
-				L = list()
-				## 3-Find childrens
-				#numRows = 4
-				#numColumns = 4
-				#Istate = getState(np.zeros((numRows, numColumns),  dtype=int), numRows, numColumns)
-				#goal_state = getState(np.ones((numRows,numColumns), dtype=int), numRows, numColumns)
-				print("goal state is")
-				print(goal_state)
-				L.append(Istate)
-        
-				# a dictionary to maintain meta information (used for path formation)
-					# key -> (parent state, action to reach child)
-				meta = dict()
-				meta[Istate] = (None,None)
-				#depth first search
-				#1.Let L be list of initial Nodes
-				#2. let n be first node in L, if L is empty set, fail
-				#3. if n is terminal state, stop
-				#4. remove n from L, add to front of L all of n's childrens randomly ordered
-				#5. Go to 2
-        
-				Lseen = set()
-				L = list()
-        
-				L.append(Istate)
-				while len(L) > 0:
-						currentState = L[0]
-						currentArray = self.getArray(currentState, numRows, numColumns)
-            
-						#print the state
-						#print("****************************")
-						#print("Current State is")
-						#printState(currentState, numRows, numColumns)
-						#print("****************************")
-            
-						if currentState == goal_state:
-								print('Reach goal state') 
-								print('Winning sequence of actions:')
-								action_list=self.construct_path(currentState, meta)
-								print(action_list)
-								self.printWinningSeqState(Istate,action_list,numRows, numColumns)
-								break
-						else: 
-								if currentState not in Lseen:
-										Lseen.add(currentState)
-										#print("Length of Lseen", len(Lseen))
-										childs, action = self.toggle(currentArray, numRows, numColumns)
-										c = list(zip(childs, action))
-										random.shuffle(c)
-										childs, action = zip(*c)
-										#random.shuffle(childs)
-										#for array in childs:
-										for i in range(len(childs)):
-												#state = getState(array, numRows, numColumns)
-												state = self.getState(childs[i], numRows, numColumns)
-												notInL = state not in L
-												notInLseen = state not in Lseen
-												if notInL and notInLseen:
-														L.insert(0, state)
-														meta[state] = (currentState, action[i]) # create metadata for these nodes
-								L.remove(currentState)
-				return action_list 
-    
-		'''
 
 if __name__ == '__main__':
 	SearchAI = SearchAI('0000', '1111', 2,2)
-	SearchAI.breadth_search()
+	SearchAI.evalHill('0000', '1111', 2,2)
+	#SearchAI.breadth_search()
