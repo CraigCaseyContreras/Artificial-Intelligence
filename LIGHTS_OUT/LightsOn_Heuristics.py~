@@ -15,6 +15,7 @@ import heapq
 import queue as Q
 import operator
 import math
+import time 
 
 L = []
 L_dict = {}
@@ -79,7 +80,7 @@ class SearchAI:
 			print(len(Lseen), 'number of moves made')
 			
 			# L_dict tracks ALL unseen children at all tiers. Useful for best first
-			print(L_dict, "L_dict AT START EVAL")
+			#print(L_dict, "L_dict AT START EVAL")
 			
 			# GENERATE NEW CHILDREN AND ACTIONS
 			childs, action = self.toggle(currentArray, numRows, numColumns)
@@ -106,7 +107,7 @@ class SearchAI:
 				if j not in Lseen:
 					# if child is not the goal...
 					if j == goal:
-						print("DONE IN EVAL FXT")
+						#print("DONE IN EVAL FXT")
 						Lseen.clear()
 						L_dict.clear()
 						L_tier.clear()
@@ -120,8 +121,8 @@ class SearchAI:
 					
 					# L DICT = ALL UNSEEN CHILDREN
 					L_dict.update( {j: summa} )
-					print(L_tier, "UNSEEN CHILDREN IN THE LEVEL")
-					print(L_dict, 'ALL UNSEEN CHILDREN')
+					#print(L_tier, "UNSEEN CHILDREN IN THE LEVEL")
+					#print(L_dict, 'ALL UNSEEN CHILDREN')
 			
 			# if algorithm Hill Climbing	
 			if algorithm == "Hill":
@@ -152,17 +153,17 @@ class SearchAI:
 				# IF MORE THAN ONE KEY, pick key randomly...
 				if len(max_keys) == 1:
 					best_child = max_keys[0]
-					print(best_child, "BEST CHILD")
+					#print(best_child, "BEST CHILD")
 				else:
 					best_child = random.choice(max_keys)
-					print(best_child, "BEST CHILD")
+					#print(best_child, "BEST CHILD")
 				# gets index in childs list of best child 
 				# uses that index to select the correct action to add to actionlist
 				index = flat_all_childs.index(best_child)
 				actionlist.append(flat_all_actions[index])
 
            
-			print(best_child, "Best Child EVAL")
+			#print(best_child, "Best Child EVAL")
 			# deletes best child from L_dict
 			del L_dict[best_child]
 			
@@ -197,6 +198,7 @@ class SearchAI:
 				print('-------------------------------')
 				# if we reach the goal, END
 				if best_child == goal:
+					#print('NUMBER OF MOVES: ', len(Lseen))
 					break
 			
 				
@@ -225,14 +227,22 @@ class SearchAI:
 				print('-------------------------------')
 				# if we reach the goal, END
 				if best_child == goal:
+					#print('NUMBER OF MOVES: ', len(Lseen))
+					print('REACHED!')
+					return goal
 					break
 
 
 if __name__ == '__main__':
-	start = '110100010'
-	goal = '000000000'
-	numRows = int(math.sqrt(len(start)))
-	numColumns = numRows
+	#From the YT Video. Should have a solution but we get errors??
+	#start = '110100010'
+	#goal = '000000000'
+	start = '0000'
+	goal = '1111'
+	numRows = 2 #int(math.sqrt(len(start)))
+	numColumns = 2 # numRows
+	start_time = time.time()
 	SearchAI = SearchAI(start, goal, numRows,numColumns)
 	SearchAI.hillClimbing(start, goal, numRows,numColumns)
-	SearchAI.best_first_search(start, goal, numRows,numColumns)
+	print("--- %s seconds ---" % (time.time() - start_time))
+	#SearchAI.best_first_search(start, goal, numRows,numColumns)
