@@ -112,6 +112,9 @@ class SearchAI:
 				# make children
 				print(currentArray, "CURRENT ARRAY")
 				childs, action = self.toggle(currentArray, numRows, numColumns)
+				c = list(zip(childs, action))
+				random.shuffle(c)
+				childs, action = zip(*c)
 				print(childs, "CHILDSSSSS")
 				print(action, 'ACTIONS!!')
 				for j in childs:
