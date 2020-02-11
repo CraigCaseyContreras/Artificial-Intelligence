@@ -24,6 +24,9 @@ myL = []
 L_tier = {}
 all_childs = []
 all_actions = []
+childs_2 = []
+actions_2 = []
+next_L_tier = {}
 
 
 class SearchAI:
@@ -93,7 +96,8 @@ class SearchAI:
         all_childs.append(childs)
         all_actions.append(action)
         # All children and actions appended WITHOUT NESTING
-        flat_all_childs = [item for sublist in all_childs for item in sublist]
+        flat_all_childs = [
+            item for sublist in all_childs for item in sublist]
         flat_all_actions = [
             item for sublist in all_actions for item in sublist]
         # for each child....
@@ -106,8 +110,11 @@ class SearchAI:
                     Lseen.clear()
                     L_dict.clear()
                     L_tier.clear()
+                    childs_2.clear()
+                    actions_2.clear()
                     return goal, goal
 
+                print(j, "JJJJJJJJJJJJJJJJJJJJJJJJJ")
                 # Sum all ones in child
                 summa = self.sumStr(j)
 
@@ -116,8 +123,24 @@ class SearchAI:
 
                 # L DICT = ALL UNSEEN CHILDREN
                 L_dict.update({j: summa})
-        print(L_tier, "UNSEEN CHILDREN IN THE LEVEL")
-        print(L_dict, 'ALL UNSEEN CHILDREN')
+                print(L_tier, "LTIERLTIERLTIER")
+                print(L_dict, "LDICTLDICTLDICT")
+
+                # beginning of look ahead function...
+                next_childs, next_action = self.toggle(self.getArray(
+                    j, numColumns, numColumns), numRows, numColumns)
+                # max dictionary value
+                for k in next_childs:
+                    k = self.convert2str(k, numRows, numColumns)
+                    summb = self.sumStr(k)
+                    next_L_tier.update({k: summb})
+                max_tier_value = max(next_L_tier.values())
+                L_tier.update({j: max_tier_value})
+                L_dict.update({j: max_tier_value})
+                # ...end of look ahead function
+
+            print(L_tier, "UNSEEN CHILDREN IN THE LEVEL")
+            print(L_dict, 'ALL UNSEEN CHILDREN')
 
         # if algorithm Hill Climbing
         if algorithm == "Hill":
@@ -131,37 +154,8 @@ class SearchAI:
                 best_child = max_keys[0]
                 print(best_child, "BEST CHILD ONLY CHILD")
             else:
-                best_child = ''
-                for possible in max_keys:
-                    # print(possible, "DISTANCE SAME AS OTHERS")
-                    # print(self.evaluate(possible, goal, numRows,
-                    #                     numColumns, algorithm), "LOOK AHEAD TIER LIST")
-                    next_L_tier = {}
-                    next_childs, next_action = self.toggle(
-                        self.getArray(possible, numColumns, numColumns), numRows, numColumns)
-                    for z in range(len(next_childs)):
-                        next_childs[z] = self.convert2str(
-                            next_childs[z], numRows, numColumns)
-                    # print(next_childs, "LOOK AHEAD NEXT CHILDREN")
-                    for l in next_childs:
-                        if l not in Lseen:
-                            if l == goal:
-                                best_child = possible
-                            summb = self.sumStr(l)
-                            next_L_tier.update({l: summb})
-                    # print(next_L_tier, "LOOK AHEAD TIER LIST")
-                    next_max_value = max(next_L_tier.values())
-                    # print(possible, max_value, next_max_value,
-                    #       "THIS IS WHAT SHOULD BE GETTING COMPARED")
-                    if next_max_value > max_value:
-                        best_child = possible
-                        print(best_child, "BEST CHILD CHOSEN WITH LOOKAHEAD")
-                        break
-                    else:
-                        pass
-                if best_child == '':
-                    best_child = random.choice(max_keys)
-                    print(best_child, "BEST CHILD CHOSEN RANDOMLY")
+                best_child = random.choice(max_keys)
+                print(best_child, "BEST CHILD CHOSEN RANDOMLY")
             # gets index in childs list of best child
             # uses that index to select the correct action to add to actionlist
             print(childs, "CHILDSSSSSSSSS")
@@ -181,39 +175,8 @@ class SearchAI:
                 best_child = max_keys[0]
                 print(best_child, "BEST CHILD")
             else:
-                best_child = ''
-                next_L_dict = L_dict
-                for possible in max_keys:
-                    # print(possible, "DISTANCE SAME AS OTHERS")
-                    # print(self.evaluate(possible, goal, numRows,
-                    #                     numColumns, algorithm), "LOOK AHEAD TIER LIST")
-                    next_childs, next_action = self.toggle(
-                        self.getArray(possible, numColumns, numColumns), numRows, numColumns)
-                    for z in range(len(next_childs)):
-                        next_childs[z] = self.convert2str(
-                            next_childs[z], numRows, numColumns)
-                    # print(next_childs, "LOOK AHEAD NEXT CHILDREN")
-                    for l in next_childs:
-                        if l not in Lseen:
-                            if l == goal:
-                                best_child = possible
-                            summb = self.sumStr(l)
-                            next_L_dict.update({l: summb})
-                    # print(next_L_tier, "LOOK AHEAD TIER LIST")
-                    next_max_value = max(next_L_dict.values())
-                    # print(possible, max_value, next_max_value,
-                    #       "THIS IS WHAT SHOULD BE GETTING COMPARED")
-                    if next_max_value > max_value:
-                        best_child = possible
-                        print(best_child, "BEST CHILD CHOSEN WITH LOOKAHEAD")
-                        break
-                    else:
-                        pass
-                if best_child == '':
-                    best_child = random.choice(max_keys)
-                    print(best_child, "BEST CHILD CHOSEN RANDOMLY")
-                # best_child = random.choice(max_keys)
-                # print(best_child, "BEST CHILD CHOSEN RANDOMLY")
+                best_child = random.choice(max_keys)
+                print(best_child, "BEST CHILD CHOSEN RANDOMLY")
             # gets index in childs list of best child
             # uses that index to select the correct action to add to actionlist
             index = flat_all_childs.index(best_child)
@@ -225,6 +188,7 @@ class SearchAI:
 
         # clears L_tier for each TIER (for Hill Climbing)
         L_tier.clear()
+        next_L_tier.clear()
         return best_child, actionlist
 
     def hillClimbing(self, Istate, goal, numRows, numColumns):
@@ -241,7 +205,7 @@ class SearchAI:
         flag = 0
 
         while flag == 0:
-            # evaluate returns best child AND the list of current selected actions
+                # evaluate returns best child AND the list of current selected actions
             best_child, actionlist = self.evaluate(
                 currentArray, goal, numRows, numColumns, "Hill")
 
