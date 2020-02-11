@@ -92,8 +92,8 @@ class SearchAI:
 										print('---------')
 										self.printState(state,numRows, numColumns)     
 										
-							
-		def evaluate(self, currentArray, goal, numRows, numColumns):
+						
+		def evaluate(self, currentArray, goal, numRows, numColumns, myL):
 			
 			childs, action = self.toggle(currentArray, numRows, numColumns)
 			c = list(zip(childs, action))
@@ -135,7 +135,7 @@ class SearchAI:
 			actionlist.append(action[maxpos])
 		
 			myL.remove(self.getState(child_to_go_to, numRows, numColumns))
-			return child_to_go_to, actionlist, 0
+			return child_to_go_to, actionlist, 0, myL
 				
 		def evalHill(self, Istate, goal, numRows, numColumns ):
 			myL = []
@@ -159,7 +159,7 @@ class SearchAI:
 				print(currentArray, "CURRENT ARRAY")
 	
 				
-				best_child, actionlist, flag = self.evaluate(currentArray, goal, numRows, numColumns)
+				best_child, actionlist, flag, myL = self.evaluate(currentArray, goal, numRows, numColumns, myL)
 				
 								
 				
