@@ -17,7 +17,7 @@ import queue as Q
 L = []
 Lseen = []
 actionlist = []
-
+myL = []
 
 class SearchAI:
 		def __init__(self,Istate,goal_state, numRows, numColumns):
@@ -47,7 +47,7 @@ class SearchAI:
 				for i in range(numRows):
 						for j in range(numColumns):
 								value = value + str(array[i,j])
-				print(value, 'value from get state!!!!')
+				# print(value, 'value from get state!!!!')
 				return value
         
 		def getArray(self,state, numRows, numColumns):
@@ -93,14 +93,17 @@ class SearchAI:
 										self.printState(state,numRows, numColumns)     
 										
 						
-		def evaluate(self, currentArray, goal, numRows, numColumns, myL):
-			
+		def evaluate(self, currentArray, goal, numRows, numColumns):
+			Lseen.append(self.getState(currentArray, numRows, numColumns))
+			print(Lseen, 'L Seen START EVAL')
+			L.pop(0)
+			print(L, "L AT TOP")
 			childs, action = self.toggle(currentArray, numRows, numColumns)
 			c = list(zip(childs, action))
 			random.shuffle(c)
 			childs, action = zip(*c)
-			print(childs, "CHILDSSSSS")
-			print(action, 'ACTIONS!!')
+			#print(childs, "CHILDSSSSS")
+			#print(action, 'ACTIONS!!')
 			for j in childs:
 				print(j, "J")
 				if self.getState(j, numRows,numColumns) not in Lseen:
@@ -109,43 +112,46 @@ class SearchAI:
 						return 'finish', goal,1
 					print(j, "child")
 					kk = self.getState(j, numRows, numColumns)
-					print(kk, 'kkkkkkk')
+					print(kk, 'before append to myL')
 					myL.append(kk)
+					print(myL, "my list after child append")
 					#myL.append(self.getState(j, numRows, numColumns))
 					# sums row's 1 and 2 for each child
 					summa = sum(j[0] + j[1])
-					print(summa, 'sum of all the board')
+					#print(summa, 'sum of all the board')
 					L.append([summa, j])
-					print(L, 'DAFSDFGasdgA')
+					print(L, 'Eval Function List')
 
 			#L.remove(self.getState(currentArray, numRows, numColumns))
-			Lseen.append(self.getState(currentArray, numRows, numColumns))
-          	
-			print(Lseen, 'This is L Seen')
+
 			indices = []
 			print(L, 'THIS IS L')
 			# pick the child with the highest value
 			for ik in range(len(L)):
 				indices.append(L[ik][0])
 				maxpos = indices.index(max(indices)) #gives the index
-			print(maxpos, 'AAAAAAAAAAAAAAAAAAAAAAAAAAA')
+			#print(maxpos, 'AAAAAAAAAAAAAAAAAAAAAAAAAAA')
             
 			#How to save the first one?
 			child_to_go_to = L[maxpos][1]
+			print(child_to_go_to, "Best Child EVAL")
 			actionlist.append(action[maxpos])
-		
+			
+			# Lseen.append(self.getState(child_to_go_to, numRows, numColumns))
+			print(Lseen, 'L SEEN BOTTOM EVAL')
+			
 			myL.remove(self.getState(child_to_go_to, numRows, numColumns))
-			return child_to_go_to, actionlist, 0, myL
+			print(myL, "MYLLLLLL after removing best child")
+			
+			return child_to_go_to, actionlist, 0
+				
 				
 		def evalHill(self, Istate, goal, numRows, numColumns ):
 			myL = []
 			myQueue = Q.PriorityQueue()
 			currentArray = self.getArray(Istate, numRows, numColumns)
 			goalState = self.getArray(goal, numRows, numColumns)
-			print(type(goalState), "type")
-			
-			
-	
+			#print(type(goalState), "type")
 			#L.append(self.getState(currentArray,numRows,numColumns))
 			#L.append(Istate) #0000
 			#currentState = L[0]
@@ -153,21 +159,14 @@ class SearchAI:
 			#currentArray = self.getArray(currentState, numRows,numColumns)
 	
 			while flag == 0:
-				
 			#for i in range(7):
 				# make children
 				print(currentArray, "CURRENT ARRAY")
-	
-				
-				best_child, actionlist, flag, myL = self.evaluate(currentArray, goal, numRows, numColumns, myL)
-				
-								
-				
+				myL.append(currentArray)
+				best_child, actionlist, flag = self.evaluate(currentArray, goal, numRows, numColumns)
 				print(actionlist, "SELECTED ACTIONNNNNNNNNNNNNNNNN")
 				print('Chosen child: ', best_child)
-				Lseen.append(self.getState(best_child, numRows, numColumns))
-				print(Lseen, 'LSEEEEN')
-				print(self.getState(best_child, numRows, numColumns), 'gfdfggfdgd')
+				print(self.getState(best_child, numRows, numColumns), 'Best Child Hill Climb')
 				print(myL, 'MYYYYL')	
 
 							
