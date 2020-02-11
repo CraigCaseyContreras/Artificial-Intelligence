@@ -105,6 +105,8 @@ class SearchAI:
 			while flag == 0:
 				L = []
 				print(currentArray, "CURRENT ARRAY")
+                # STARTTTT EVALLLLLLLLLLLL
+                #GET CHILDRENNNN
 				childs, action = self.toggle(currentArray, numRows, numColumns)
 				c = list(zip(childs, action))
 				random.shuffle(c)
@@ -144,6 +146,7 @@ class SearchAI:
 				actionlist.append(action[maxpos+1])
 				print(actionlist, "SELECTED ACTIONNNNNNNNNNNNNNNNN")
 				print('Chosen child: ', child_to_go_to)
+                # END EVALLLLLLLLL RETURN BEST CHILDDDDDDDDDDDD
 				Lseen.append(self.getState(child_to_go_to, numRows, numColumns))
 				print(Lseen, 'LSEEEEN')
 				print(self.getState(child_to_go_to, numRows, numColumns), 'gfdfggfdgd')
