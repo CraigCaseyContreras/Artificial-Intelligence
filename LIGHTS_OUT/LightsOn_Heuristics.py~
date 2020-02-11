@@ -229,11 +229,8 @@ class SearchAI:
 
 
 if __name__ == '__main__':
-	#From the YT Video. Should have a solution but we get errors??
-	#start = '110100010'
-	#goal = '000000000'
-	start = '0000'
-	goal = '1111'
+	start = '110100010'
+	goal = '000000000'
 	numRows = int(math.sqrt(len(start)))
 	numColumns = numRows
 	SearchAI = SearchAI(start, goal, numRows,numColumns)
