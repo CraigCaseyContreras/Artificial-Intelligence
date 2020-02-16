@@ -133,7 +133,7 @@ class SearchAI:
 								next_childs, next_action = self.toggle(self.getArray(
 										j, numRows, numColumns), numRows, numColumns)
 								# max dictionary value
-								
+
 								#USE FOR LOOKAHEAD
 								for k in next_childs:
 										k = self.convert2str(k, numRows, numColumns)
@@ -216,7 +216,8 @@ class SearchAI:
 
 						# update currentArray wit best child
 						currentArray = self.getArray(best_child, numRows, numColumns)
-						# print("CHOSEN ACTIONS: ", actionlist)
+						print("CHOSEN ACTIONS: ", actionlist)
+						print(len(actionlist))
 						# print('BEST CHILDREN: ', best_child)
 						# print('-------------------------------')
 						# print('-------------------------------')
@@ -259,13 +260,14 @@ if __name__ == '__main__':
 				#start = '110100010'
 				#goal = '000000000'
 		times = []
-		start = '0000000000000000000000000'
-		goal = '1111111111111111111111111'
-		numRows = 5  # int(math.sqrt(len(start)))
-		numColumns = 5  # numRows
+		start = '000000000000000000000000000000000000'
+		goal = '111111111111111111111111111111111111'
+		numRows = 6  # int(math.sqrt(len(start)))
+		numColumns = 6  # numRows
 		SearchAI = SearchAI(start, goal, numRows, numColumns)
 		for i in range(1):
 			start_time = time.time()
+			print('WITH LOOK AHEAD - 6x6')
 			#SearchAI.hillClimbing(start, goal, numRows, numColumns)
 			SearchAI.best_first_search(start, goal, numRows, numColumns)
 			avg = time.time() - start_time
