@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[68]:
+# In[1]:
 
 
 import numpy as np, random, operator, pandas as pd, matplotlib.pyplot as plt
@@ -79,8 +79,12 @@ def plot_pop(cities):
     plt.show()
     return
 
+def initialPopulation(cities, populationSize):
+    population = [generatePath(cities) for i in range(0, populationSize)]
+    return population
 
-# In[71]:
+
+# In[3]:
 
 
 f = open("TSM.txt", 'r').read().splitlines()
@@ -96,11 +100,18 @@ tot = total_distance(cities)
 print("total distance: ", tot)
 list= generatePath(cities)
 
+population = initialPopulation(cities,10)
 
-# In[72]:
+
+# In[6]:
 
 
-plot_pop(list)
+for idx, pop_plot in enumerate (population):
+    print('Initial Population '+ str(idx),pop_plot)
+    plot_pop(pop_plot)
+
+#for pop_plot in population:
+ #   plot_pop(pop_plot)
 
 
 # In[ ]:
