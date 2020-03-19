@@ -52,11 +52,10 @@ def generatePath(cities):
 def plot_pop(cities):
     with open("city_names.txt") as f:
         content = f.readlines()
-        print(content)
-        
+    content = list(map(lambda s: s.strip(), content))    
+       
     city_names = content
-    
-    
+   
     plt.figure(figsize=(20,10))
     x = [i[0] for i in cities]
     y = [i[1] for i in cities]
@@ -71,46 +70,46 @@ def plot_pop(cities):
     for i in range(len(cities)):
         x_vals.append(cities[i][0])
         y_vals.append(cities[i][1])
-    
+
     for i, txt in enumerate(city_names):
         plt.annotate(txt, (x_vals[i], y_vals[i]),horizontalalignment='center', 
             #verticalalignment='bottom',
                     )
     plt.show()
-    return
+    
+    # combines city names and coordinates
+    comboCoords = list(zip(content, x_vals, y_vals))
+    return comboCoords
 
-
+def generateChildren(coords):
+		# shuffles zipped list of city names and coordinates
+		# returns shuffled list
+		new = random.shuffle(coords)
+		return new
 # In[71]:
 
 
 f = open("TSM.txt", 'r').read().splitlines()
 numCities = f.pop(0)
+# cities is a list of all of the coordinates 
 cities = np.array([ tuple( map( float, coord.split() ) ) for coord in f ]).tolist()
-
+print(cities, "cities")
 val = distance_between_cities(cities)
 
-print(val)
+print(val, "dist btwn cities")
 
 tot = total_distance(cities)
 
 print("total distance: ", tot)
-list= generatePath(cities)
 
+# list is the (x,y) coordinate pairs for all 30 cities
+city_coords= generatePath(cities)
 
-# In[72]:
-
-
-plot_pop(list)
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
+# plot cities
+comboCoords1 = plot_pop(city_coords)
+# shuffles list, which generates 1 new child
+# could put FOR loop into generateChildren() to have it make
+# multiple kids
+newKids = generateChildren(comboCoords1)
 
 
