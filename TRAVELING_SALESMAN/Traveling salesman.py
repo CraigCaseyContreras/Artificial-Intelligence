@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[190]:
 
 
 import numpy as np, random, operator, pandas as pd, matplotlib.pyplot as plt
@@ -9,109 +9,152 @@ import math
 import numpy as np
 import pandas as pd
 
-def distance_between_cities(cities):
-    data = dict()
-    for index, value in enumerate(cities):
-        x1 = cities[index][0]
-        print(x1, "x1")
-        y1 = cities[index][1]
-        print(y1, "y1")
-        print(index+1)
-        print(len(cities) -1)
-        if index + 1 <= len(cities)-1:
-            x2 = cities[index+1][0]
-            print(x2, "x2")
-            y2 = cities[index+1][1]
-            print(y2, "y2")
-            xdiff = x2 - x1
-            ydiff = y2 - y1
-            dst = (xdiff*xdiff + ydiff*ydiff)** 0.5 #The distance formula
-            data['Distance from city '+ str(index+1) +' to city ' + str(index+2)] = dst 
-        elif index + 1 > len(cities)-1: #Need or it will go out of bounds
-            x2 = cities[0][0]
-            y2 = cities[0][1]
-            xdiff = x2 - x1
-            ydiff = y2 - y1
-            dst = (xdiff*xdiff + ydiff*ydiff)** 0.5 #The distance formula
-            data['Distance from city '+ str(index+1) + ' to city ' + str(index +2 -len(cities))] = dst
-              
-    return data
-
-def total_distance(cities):
-    total = sum(distance_between_cities(cities).values())
-    return total
-
-#The random.sample() returns a list of unique elements chosen randomly from the list, sequence, or set, 
-#we call it random sampling without replacement. In simple terms, for example, you have a list of 100 names, 
-#and you want to choose ten names randomly from it without repeating names, then you must use random.sample().
-
-def generatePath(cities):
-    path = random.sample(cities, len(cities))
-    return path
-
-def plot_pop(cities):
-    with open("city_names.txt") as f:
-        content = f.readlines()
-        print(content)
-        
-    city_names = content
+class initialize:
     
+    def __init__(self, cities, city_names, populationSize):
+        self.cities = cities
+        self.city_name = city_names
+        self.populationSize = populationSize
+        #self.cityList = cityList
     
-    plt.figure(figsize=(20,10))
-    x = [i[0] for i in cities]
-    y = [i[1] for i in cities]
-    x1=[x[0],x[-1]]
-    y1=[y[0],y[-1]]
-    plt.plot(x, y, 'b', x1, y1, 'b')
-    plt.scatter (x, y)
+    def distance_between_cities(self, cities):
+        data = dict()
+        for index, value in enumerate(cities):
+            x1 = cities[index][0]
+            y1 = cities[index][1]
+            if index + 1 <= len(cities)-1:
+                x2 = cities[index+1][0]
+                y2 = cities[index+1][1]
+                xdiff = x2 - x1
+                ydiff = y2 - y1
+                dst = (xdiff*xdiff + ydiff*ydiff)** 0.5
+                data['Distance from city '+ str(index+1) +' to city ' + str(index+2)] = dst 
+            elif index + 1 > len(cities)-1:
+                x2 = cities[0][0]
+                y2 = cities[0][1]
+                xdiff = x2 - x1
+                ydiff = y2 - y1
+                dst = (xdiff*xdiff + ydiff*ydiff)** 0.5
+                data['Distance from city '+ str(index+1) + ' to city ' + str(index +2 -len(cities))] = dst
+        return data
+
+    def total_distance(self, cities):
+        total = sum(distance_between_cities(cities).values())
+        return total
+
+    def generatePath(self):
+        path = random.sample(self.cities, len(self.cities))
+        return path
+
+    def plot_pop(self, cities, city_names, cityList):
+        xList = []
+        yList = []
+        for i in range(len(cityList)):
+            xList.append(cityList[i][0])
+            yList.append(cityList[i][1])
+
+        plt.figure(figsize=(20,10))
+        x = [i[0] for i in cities]
+        y = [i[1] for i in cities]
+        x1=[x[0],x[-1]]
+        y1=[y[0],y[-1]]
+        plt.plot(x, y, 'b', x1, y1, 'b')
+        plt.scatter (x, y) 
+
+        for i, txt in enumerate(city_names):
+            plt.annotate(txt, (xList[i], yList[i]),horizontalalignment='center', 
+                verticalalignment='bottom',
+                        )
+            print(txt, xList[i], yList[i])
+        plt.show()
+        return
+
+    def initialPopulation(self):
+        population = [generatePath(self.cities) for i in range(0, self.populationSize)]
+        return population
+
+
+class GeneticAlgorithm:
+    def __init(self):
+        return
     
-    x_vals = []
-    y_vals = []
+    #For the fitness levels, I base it off of total distance. We can decide on this, but I get the total distances and 
+    #do 1/totalDistance.
+    def path_fitness(self, cities):
+        total_dis = total_distance(cities)
+        fitness = 1 / float(total_dis)
+        return fitness
+
+if __name__ == '__main__':
+    f = open("TSM.txt", 'r').read().splitlines()
+    cityCoords = np.array([ tuple( map( float, coord.split() ) ) for coord in f ]).tolist()
+    #print("City Coords: ", cityCoords)
+    #val = distance_between_cities(cityCoords).values()
+    list= generatePath()
+    #print(list)
+    city_names = open("city_names.txt", 'r').read().splitlines()
     
-    for i in range(len(cities)):
-        x_vals.append(cities[i][0])
-        y_vals.append(cities[i][1])
+    initial = initialize(cityCoords, city_names, 10)
     
-    for i, txt in enumerate(city_names):
-        plt.annotate(txt, (x_vals[i], y_vals[i]),horizontalalignment='center', 
-            #verticalalignment='bottom',
-                    )
-    plt.show()
-    return
-
-def initialPopulation(cities, populationSize):
-    population = [generatePath(cities) for i in range(0, populationSize)]
-    return population
+    population = initial.initialPopulation()
+    for idx, pop_plot in enumerate(population):
+        print('Init pop. ' + str(idx), pop_plot)
+        print('\n')
+        initial.plot_pop(pop_plot, city_names, cityCoords)
 
 
-# In[3]:
+# In[ ]:
 
 
-f = open("TSM.txt", 'r').read().splitlines()
-numCities = f.pop(0)
-cities = np.array([ tuple( map( float, coord.split() ) ) for coord in f ]).tolist()
-
-val = distance_between_cities(cities)
-
-print(val)
-
-tot = total_distance(cities)
-
-print("total distance: ", tot)
-list= generatePath(cities)
-
-population = initialPopulation(cities,10)
 
 
-# In[6]:
+
+# In[ ]:
 
 
-for idx, pop_plot in enumerate (population):
-    print('Initial Population '+ str(idx),pop_plot)
-    plot_pop(pop_plot)
 
-#for pop_plot in population:
- #   plot_pop(pop_plot)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
