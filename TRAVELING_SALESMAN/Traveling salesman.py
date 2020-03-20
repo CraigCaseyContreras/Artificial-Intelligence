@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[190]:
-
-
 import numpy as np, random, operator, pandas as pd, matplotlib.pyplot as plt
 import math
 import numpy as np
@@ -70,7 +67,7 @@ class initialize:
         return
 
     def initialPopulation(self):
-        population = [generatePath(self.cities) for i in range(0, self.populationSize)]
+        population = [self.generatePath() for i in range(0, self.populationSize)]
         return population
 
 
@@ -81,7 +78,7 @@ class GeneticAlgorithm:
     #For the fitness levels, I base it off of total distance. We can decide on this, but I get the total distances and 
     #do 1/totalDistance.
     def path_fitness(self, cities):
-        total_dis = total_distance(cities)
+        total_dis = self.total_distance(cities)
         fitness = 1 / float(total_dis)
         return fitness
 
@@ -90,11 +87,12 @@ if __name__ == '__main__':
     cityCoords = np.array([ tuple( map( float, coord.split() ) ) for coord in f ]).tolist()
     #print("City Coords: ", cityCoords)
     #val = distance_between_cities(cityCoords).values()
-    list= generatePath()
+    
     #print(list)
     city_names = open("city_names.txt", 'r').read().splitlines()
     
     initial = initialize(cityCoords, city_names, 10)
+    #list= initial.generatePath()
     
     population = initial.initialPopulation()
     for idx, pop_plot in enumerate(population):
@@ -102,69 +100,6 @@ if __name__ == '__main__':
         print('\n')
         initial.plot_pop(pop_plot, city_names, cityCoords)
 
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
+#I still gotta fix the functions to make sure they all work fine in the class, but it works.
+#Now we just need to do the Genetic Algorithm stuff. We can do that in the class.
+#After the fitness, we need to rank them, select, and mate/breed the bitches.
