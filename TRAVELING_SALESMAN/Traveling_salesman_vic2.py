@@ -205,22 +205,44 @@ class GeneticAlgorithm:
 		f = first[1]
 		s = sec[1]
 		kiddo = []
+		kiddo2 = []
 		
-		# Single Point Crossover
-		# Pull the first five cities from parent 1, append to list kiddo
-		# Pull the remaining cities from parent 2, append to list kiddo
-		for l in range(5):
-			kiddo.append(f[l])
-			f.pop(l)
-		for m in range(len(s)):
-			if s[m] not in kiddo:
-				kiddo.append(s[m])
+		flag = random.uniform(0,1)
+		if flag <= 0.9:
+			# Single Point Crossover
+			# Pull the first five cities from parent 1, append to list kiddo
+			# Pull the remaining cities from parent 2, append to list kiddo
+			for l in range(5):
+				kiddo.append(f[l])
+				f.pop(l)
+			for m in range(len(s)):
+				if s[m] not in kiddo:
+					kiddo.append(s[m])
+			# To keep population from decreasing by 1 every time there is a mating,
+			# Mating generates 2 kids. 
+			# Pull the first five cities from parent 2, append to list kiddo2
+			# Pull the remaining cities from parent 1, append to list kiddo2
+			for n in range(5):
+				kiddo2.append(s[n])
+				s.pop(n)
+			for o in range(len(f)):
+				if f[o] not in kiddo2:
+					kiddo2.append(f[o])
+		elif flag > 0.9:
+			# MUTATION
+			# Switches 2 elements in best and 2nd best paths
+			f[5],f[6] = f[6],f[5]
+			kiddo = f
+			s[5],s[6] = s[6],s[5]
+			kiddo2 = s
+		
 		# new_population contains ONLY paths (no 1/distance included)
 		# it includes unmated children, and the new child. 
 		# I programmed it this way so that mating() returns a new population.
 		# This new population can then be plugged into path_fitness() and rankPaths()
 		new_population = [n[1:] for n in combo1]
 		new_population.append(kiddo)
+		new_population.append(kiddo2)
 		return new_population
 
 if __name__ == '__main__':
@@ -250,9 +272,12 @@ if __name__ == '__main__':
 
 	genetics = GeneticAlgorithm()
 	fitness = genetics.path_fitness(cityCoords)
+	# ranks is a nested list containing the [1/distance [and paths]]
 	ranks = genetics.rankPaths(population)
-	print(ranks, "RANKS")
+	#print(ranks, "RANKS")
 	
 	# new_pop is a list of all paths. So its another list of lists. 
+	# I programmed it this way so that mating() returns a new population.
+	# This new population can then be plugged into path_fitness() and rankPaths()
 	new_pop = genetics.mating(ranks)
 	print(new_pop, "NEW POPULATION")
