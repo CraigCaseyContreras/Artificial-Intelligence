@@ -105,7 +105,14 @@ class GeneticAlgorithm:
         
     
     def haveSex(self, father, mother):
+        #father and mother are just names I gave them
+        #father would be the poolForSex, but randomized in order and mother would be 
+        #the same but starting from the end. I try to start from the end and then meet in the middle
+        #So Father is first map when i = 0 and mother would be map at i = len(pool) - i -1
+        
         #The method of max and min I found online. It's just a way to get father's population and mother's population
+        
+        #Generate two random lengths for generation 1 and generation 2
         gen1Length= int(random.random() * len(father))
         print(gen1Length, 'Gen1')
         gen2Length = int(random.random() * len(mother))
@@ -115,12 +122,26 @@ class GeneticAlgorithm:
         
         print(father, "FAATHER")
         #This just get's the indicated "i" value from father's population
+        
+        #So here is where the bredding stuff goes down. I left it printed. Go to where you see numbers of Gen1 and Gen2
+        #Youll see that some are different. Okay so look at father. And i would be starting at whatever the first generation is
+        #So if gen1Lenth is 2, the it would start at father[2] and go all the way to say father [5] depending on what that value is
+        #Example: range(2,5)
+        #So it adds those CITIES, NOT MAPS. remember we are doing this whole function for the length of the "losers". So if it is 5, then each time
+        #the function is run is a new map. So right now we are at the first run of the function, for the first loser map.
+        
+        #So for this map, the indicated "i" cities are added to tot_parent1. For tot_parent2, we add stuff from MOTHER, not FATHER like how we did in tot_parent1
+        #So just add whatever remaining space is left. This is sort of like how VIctoria did the mutate.
+        #It was inspired by that. NOTE that this is NOT mutating, this is simply breedidng and combining features of both because sex obv.
         tot_parent1 = [father[i] for i in range(first_generation, last_generation)]
         print(mother, "MOOTHER")
         print(tot_parent1)
         #Whatever isn't from father, include to here
         tot_parent2 = [i for i in mother if i not in tot_parent1]
         print(tot_parent2)
+        
+        #Returns the combination of the two for ONE MAP. For i=2 in range(LosingLength), new values for gen1length and gen2length are formed and the same thing is done.
+        #In the end, we should have run this 5 times if the elites was 5. Or 9 times if the elites was 1.
         return tot_parent1 + tot_parent2
         
         ''''#Randomizes the "order" of the pool. Doesn't matter because we saved the top 5 here so as long as they are here, we good
@@ -160,17 +181,29 @@ class GeneticAlgorithm:
     def population_after_sex(self, poolForSex, elites):
         #This is the length of the population that is not part of the elites
         LosingLength = len(poolForSex) - elites
-        #Using the elite population, just randomize their order and make that a new population for now of length 5
+        print("-------------POPULATION AFTER SEX FUNCTION----------------")
+        #This just randomizes order of the pool and makes Good the pool's length
         GoodLength = random.sample(poolForSex, len(poolForSex))
+        print(GoodLength, "GOOD LENGTH")
+        print("POOL FOR SEX", poolForSex)
         #This is the first part of the population of only the elites. So need part 2 of the people to have sex to survive
+        #This hold 5 maps, NOT 5 cities, depending on the elites value. If elites was 2, part1 hold 2 MAPS.
         part1 = [poolForSex[i] for i in range(elites)]
+        print("PART 1!!!!!!!!!!!", part1)
         #The people who have sex are the people in the "New Elite Population". This is because if you are not elite, you don't survive. Duhhh
         #"Battle of the Fittest".
-        #This is why when we "perform selection" the stuff in the for loop doesn't really matter. They won't procreate.
+        #This is why when we "perform selection" the stuff in the for loop doesn't really matter. They will procreate.
+        #The 5 elite maps stay the same. Compare the first 5 maps from poolForSex and part1 to see
+        #The people mating are the 5 maps but for the length of the losers. Here maps mate with each other essentially
+        #For example, if elites was 3, then part1 would have 3 maps and part 2 would have 7 maps
+        
+        #Runs this for the remaining of the spaces. Look at explanation in function. It is run for len(pool) - elites times!!!
         part2 = [self.haveSex(GoodLength[i], GoodLength[len(poolForSex)-i-1]) for i in range(LosingLength)]
         combined = part1 + part2
+        #Returns the population of maps after having sex.
         return combined
     
+    #Need to fixto work with functions.
     def mutate(self, f, s, rate):
         kiddo = []
         kiddo2 = []
@@ -211,7 +244,7 @@ class GeneticAlgorithm:
     #We don't really save them anywhere (yet). And since we mutate and stuff it'll be different anyway.
     #And it helps because then we wont "run" out of maps.
     #I'm not sure if we NEED it, but I am using it for now to see where I go from here. Maybe it helps in recognizing the "best" map
-    def perform_selection(self, pop, eliteSize):
+    def perform_selection(self, pop, eliteSize): #Again, I found this on stack overflow and modified it
         #output = rankPathes(population)
         df = pd.DataFrame(np.array(pop), columns=["Index","Fitness"])
         #print(df)
@@ -233,7 +266,7 @@ class GeneticAlgorithm:
                     #print(df.iat[i,3])
                     selected_values.append(pop[i][0])
                     break
-                
+            #Returns map #'s or map ID's. So like Map2, Map5, Map1, etc. ID's!!! NOT ENTIRE MAPS!!!!    
         return selected_values
 
     '''def get_following_gen(existing_gen, eliteSize, mutat_rate):
@@ -287,6 +320,7 @@ if __name__ == '__main__':
     #This returns the population pool that will be used to mate using the selected values
     poolForSex = genetics.get_pool_for_sex(population, selected_values)
     
+    #The population after having sex
     after = genetics.population_after_sex(poolForSex, elites)
     print("-----------------------------BEFORE SEX-----------------------")
     print(poolForSex)
@@ -308,7 +342,5 @@ if __name__ == '__main__':
     #new_pop = genetics.mating(ranks)
     #print(new_pop)
     
-    
-#I still gotta fix the functions to make sure they all work fine in the class, but it works.
-#Now we just need to do the Genetic Algorithm stuff. We can do that in the class.
-#After the fitness, we need to rank them, select, and mate/breed the bitches.
+
+    #Need to do: Fix mutation and make generate_next_population() using all the functions.
