@@ -100,7 +100,7 @@ class GeneticAlgorithm:
         #return sorted(combination, key = operator.itemgetter(0), reverse = True)
     
     def get_pool_for_sex(self, population, elites):
-        return [population[selected_values[i]] for i in range(len(selected_values))]
+        return [population[elites[i]] for i in range(len(elites))]
         
     
     def haveSex(self, father, mother):
