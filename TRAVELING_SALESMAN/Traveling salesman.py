@@ -99,8 +99,9 @@ class GeneticAlgorithm:
         return sorted(results.items(), key = operator.itemgetter(1), reverse = True)
         #return sorted(combination, key = operator.itemgetter(0), reverse = True)
     
+    #This pretty much just orders the thing correctly using the selected values
     def get_pool_for_sex(self, population, elites):
-        return [population[selected_values[i]] for i in range(len(selected_values))]
+        return [population[elites[i]] for i in range(len(elites))]
         
     
     def haveSex(self, father, mother):
@@ -222,7 +223,7 @@ class GeneticAlgorithm:
         df['cum_percentage'] = 100*df.cumulative_sum/df.Fitness.sum()
         selected_values = [pop[i][0] for i in range(eliteSize)] #The 5 "maps" of the top 5 ranks. On ranks, the first value of the tuple
             
-        #print(selected_values, '!st selection!!')
+        print(selected_values, '!st selection!!')
         #Now pick the remaining randomly. Can be repeated "maps" because they are not considered elit
         for i in range(len(pop) - eliteSize):
             pick = 100*random.random()
@@ -272,11 +273,18 @@ if __name__ == '__main__':
     ranks = genetics.rankPaths(population)
     #selected_values = genetics.perform_selection(ranks, 5)
     
+    #This is the number of "fit" people per generation. Can change it
     elites = 5
 
     #popp = genetics.rankPaths(population)
+    
+    #This returns the top 5 values AND selections of any of the people in the rankings.
+    #So returns the values likes [0,2, 3,4,5,6,4,5,3,1]
+    #Where the first 5 in the list are the top 5 rankings of the population (look at ranks)
+    #Andd the rest are selections of ANY remaining 5, can be repeated but it doesn't matter because we will mate
     selected_values = genetics.perform_selection(ranks,elites)
     
+    #This returns the population pool that will be used to mate using the selected values
     poolForSex = genetics.get_pool_for_sex(population, selected_values)
     
     after = genetics.population_after_sex(poolForSex, elites)
