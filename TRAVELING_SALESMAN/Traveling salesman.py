@@ -102,7 +102,7 @@ class GeneticAlgorithm:
     #This pretty much just orders the thing correctly using the selected values
     def get_pool_for_sex(self, population, elites):
         return [population[elites[i]] for i in range(len(elites))]
-        
+  
     
     def haveSex(self, father, mother):
         #father and mother are just names I gave them
@@ -114,13 +114,13 @@ class GeneticAlgorithm:
         
         #Generate two random lengths for generation 1 and generation 2
         gen1Length= int(random.random() * len(father))
-        print(gen1Length, 'Gen1')
+        #print(gen1Length, 'Gen1')
         gen2Length = int(random.random() * len(mother))
-        print(gen2Length, 'GEN2')
+        #print(gen2Length, 'GEN2')
         first_generation = min(gen1Length, gen2Length)       
         last_generation = max(gen1Length, gen2Length)
         
-        print(father, "FAATHER")
+        #print(father, "FAATHER")
         #This just get's the indicated "i" value from father's population
         
         #So here is where the bredding stuff goes down. I left it printed. Go to where you see numbers of Gen1 and Gen2
@@ -134,62 +134,29 @@ class GeneticAlgorithm:
         #So just add whatever remaining space is left. This is sort of like how VIctoria did the mutate.
         #It was inspired by that. NOTE that this is NOT mutating, this is simply breedidng and combining features of both because sex obv.
         tot_parent1 = [father[i] for i in range(first_generation, last_generation)]
-        print(mother, "MOOTHER")
-        print(tot_parent1)
+        #print(mother, "MOOTHER")
+        #print(tot_parent1)
         #Whatever isn't from father, include to here
         tot_parent2 = [i for i in mother if i not in tot_parent1]
-        print(tot_parent2)
+        #print(tot_parent2)
         
         #Returns the combination of the two for ONE MAP. For i=2 in range(LosingLength), new values for gen1length and gen2length are formed and the same thing is done.
         #In the end, we should have run this 5 times if the elites was 5. Or 9 times if the elites was 1.
         return tot_parent1 + tot_parent2
         
-        ''''#Randomizes the "order" of the pool. Doesn't matter because we saved the top 5 here so as long as they are here, we good
-        pl = random.sample(poolForSex, len(poolForSex))
-        ln = len(pl) - elites
-
-        # first and sec are best and 2nd best paths salesman can take
-        # first and sec are nested lists containing 10 elements.
-        # Each element contains the 1/distance calculation and then the complete path
-        first = combo1[0]
-        sec = combo1[1]
-        # removes the best and 2nd best path from overall list. 
-        combo1.pop(0)
-        combo1.pop(1)
-        # splits nested listing, so now we only have the ordered paths of best and 2nd best.  
-        f = first[1]
-        s = sec[1]
-       
-        
-        rate = random.uniform(0,1)
-        
-        mutated_population = self.mutate(f, s, rate)
-      
-        kiddo = mutated_population[0]
-        kiddo2 = mutated_population[1]
-        
-        # new_population contains ONLY paths (no 1/distance included)
-        # it includes unmated children, and the new child. 
-        # I programmed it this way so that mating() returns a new population.
-        # This new population can then be plugged into path_fitness() and rankPaths()
-        new_population = [n[1:] for n in combo1]
-        new_population.append(kiddo)
-        new_population.append(kiddo2)
-        
-        return new_population'''
         
     def population_after_sex(self, poolForSex, elites):
         #This is the length of the population that is not part of the elites
         LosingLength = len(poolForSex) - elites
-        print("-------------POPULATION AFTER SEX FUNCTION----------------")
+        #print("-------------POPULATION AFTER SEX FUNCTION----------------")
         #This just randomizes order of the pool and makes Good the pool's length
         GoodLength = random.sample(poolForSex, len(poolForSex))
-        print(GoodLength, "GOOD LENGTH")
-        print("POOL FOR SEX", poolForSex)
+        #print(GoodLength, "GOOD LENGTH")
+        #print("POOL FOR SEX", poolForSex)
         #This is the first part of the population of only the elites. So need part 2 of the people to have sex to survive
         #This hold 5 maps, NOT 5 cities, depending on the elites value. If elites was 2, part1 hold 2 MAPS.
         part1 = [poolForSex[i] for i in range(elites)]
-        print("PART 1!!!!!!!!!!!", part1)
+        #print("PART 1!!!!!!!!!!!", part1)
         #The people who have sex are the people in the "New Elite Population". This is because if you are not elite, you don't survive. Duhhh
         #"Battle of the Fittest".
         #This is why when we "perform selection" the stuff in the for loop doesn't really matter. They will procreate.
@@ -203,40 +170,60 @@ class GeneticAlgorithm:
         #Returns the population of maps after having sex.
         return combined
     
-    #Need to fixto work with functions.
-    def mutate(self, f, s, rate):
-        kiddo = []
-        kiddo2 = []
+    #Need to fix to work with functions.
+    def mutate(self, individual_city, rate):
+        #This just chooses 1 random position in the population, so like 2 and exchanges the "exchanged" value:those cities. 
+        #So exchanged will be 0,1,2,3,4,...,9 because for loop remember. "exchanged_with" is the rnadom position. What is returned
+        #is the population with those cities changed. This happens for 10 times, so the length of the map, or popuation.
+        #This function is run 10 times, each for each map. And for a map, it is also run 10 times, each for cities.
+        #So if exchanged is 2 and exchanged_with is 7 and those two potisions change. But this goes on for 10 times
+        mutation_pick = random.random()
+        if  mutation_pick < rate:
+            for exchanged in range(len(individual_city)):
+                exchanged_with = int(random.random() * len(individual_city))
+                #print('\n')
+                #print(exchanged, 'exchanged')
+                #print(exchanged_with, 'exchanged with')
+            
+                city1 = individual_city[exchanged]
+                #print(city1, 'city1')
+                city2 = individual_city[exchanged_with]
+                #print(city2, 'city2')
+                #print('\n')
+                
+                individual_city[exchanged] = city2
+            
+                individual_city[exchanged_with] = city1
+                #print(individual_city, 'individual city')
+                
+        else:
+            #Victoria's thing. Switches 2 random elements. ONLY 2 though. It could be that it tries switching with itself.
+            #For this, need to include if-else stament I think?? Or just no mutation at all??
+            exchanged = int(random.random() * len(individual_city))
+            exchanged_with = int(random.random() * len(individual_city))
+            #If they are the same value, then no mutation? So all good?
+            #print('\n')
+            #print(exchanged, 'exchanged')
+            #print(exchanged_with, 'exchanged with')
+            
+            city1 = individual_city[exchanged]
+            #print(city1, 'city1')
+            city2 = individual_city[exchanged_with]
+            #print(city2, 'city2')
+            #print('\n')
+                
+            individual_city[exchanged] = city2
+            
+            individual_city[exchanged_with] = city1
+            #print(individual_city, 'individual city')
         
-        if rate <= 0.9:
-            # Single Point Crossover
-            # Pull the first five cities from parent 1, append to list kiddo
-            # Pull the remaining cities from parent 2, append to list kiddo
-            for l in range(5):
-                kiddo.append(f[l])
-                f.pop(l)
-            for m in range(len(s)):
-                if s[m] not in kiddo:
-                    kiddo.append(s[m])
-            # To keep population from decreasing by 1 every time there is a mating,
-            # Mating generates 2 kids. 
-            # Pull the first five cities from parent 2, append to list kiddo2
-            # Pull the remaining cities from parent 1, append to list kiddo2
-            for n in range(5):
-                kiddo2.append(s[n])
-                s.pop(n)
-            for o in range(len(f)):
-                if f[o] not in kiddo2:
-                    kiddo2.append(f[o])
-        elif rate > 0.9:
-            # MUTATION
-            # Switches 2 elements in best and 2nd best paths
-            f[5],f[6] = f[6],f[5]
-            kiddo = f
-            s[5],s[6] = s[6],s[5]
-            kiddo2 = s
-        return (kiddo, kiddo2)
+        return individual_city
 
+    #This returns the pool of maps after mutating each one. Code is about the same as the get_pool_for_sex() one.
+    #Just switched the function being called
+    def get_pool_after_mutation(self, population, rate):
+        return [self.mutate(population[i], rate) for i in range(len(population))]
+    
     #This funciton I found somewhere on StackOverFlow. The df parts at least.
     #Basically, we pass in an eliteSize, so like "Top 3" or "Top 5"
     #So the Top 5 populations, or maps, are kept intact. Meaning they survive for sure.
@@ -256,7 +243,7 @@ class GeneticAlgorithm:
         df['cum_percentage'] = 100*df.cumulative_sum/df.Fitness.sum()
         selected_values = [pop[i][0] for i in range(eliteSize)] #The 5 "maps" of the top 5 ranks. On ranks, the first value of the tuple
             
-        print(selected_values, '!st selection!!')
+        #print(selected_values, '!st selection!!')
         #Now pick the remaining randomly. Can be repeated "maps" because they are not considered elit
         for i in range(len(pop) - eliteSize):
             pick = 100*random.random()
@@ -269,45 +256,57 @@ class GeneticAlgorithm:
             #Returns map #'s or map ID's. So like Map2, Map5, Map1, etc. ID's!!! NOT ENTIRE MAPS!!!!    
         return selected_values
 
-    '''def get_following_gen(existing_gen, eliteSize, mutat_rate):
-        pop = rankPathes(existing_gen)
-        
-        selected_values = perform_selection(pop, eliteSize)
-       
-        my_mating_pool = do_mating_pool(existing_gen, selected_values)
-        tot = do_breed_population(my_mating_pool, eliteSize)
-        following_gen = do_mutatation(tot, mutat_rate)
-        #print(following_gen)
-        return following_gen
-    get_following_gen(population, 5, 0.01)'''
+    def next_generation(self, population, elites, rate):
+        #Population would start with the inital one and then each time after the mutation, it will change
+        ranks = self.rankPaths(population)
+        selections = self.perform_selection(ranks, elites)
+        poolForSex = self.get_pool_for_sex(population, selections)
+        afterSex = self.population_after_sex(poolForSex, elites)
+        mutated_pool = self.get_pool_after_mutation(afterSex, rate)
+        #print(mutated_pool, "MUTATED")
+        return mutated_pool
+    
+    #Generations meaning how many generations to run the program for
+    def pass_time(self, elites, rate, generations):
+        f = open("TSM.txt", 'r').read().splitlines()
+        cityCoords = np.array([ tuple( map( float, coord.split() ) ) for coord in f ]).tolist()
+        city_names = open("city_names.txt", 'r').read().splitlines()
+        popSize = 10
+        initial = initialize(cityCoords, city_names, popSize)
+        population = initial.initialPopulation()
+        #Runs the thing generations times
+        #After each run, the optimal route and stuff recognizes
+        for i in range(generations):
+            population = self.next_generation(population, elites, rate)
+            print("Population",i,population)
+            print('\n')
+        best_rank = self.rankPaths(population)[0][0] #Has to be outside cause population[0][0] doesnt work.
+        optimal_route = population[best_rank]
+        #ordered_cities = self.get_names(optimal_route,cityCoords,city_names)
+        #print([(indx,val) for indx,val in enumerate(ordered_cities)])
+        #plot_pop(optimal_route)
+        print(optimal_route)
+        initial.plot_pop(optimal_route)
+        return optimal_route
+
 
 if __name__ == '__main__':
-    f = open("TSM.txt", 'r').read().splitlines()
-    #List of cities essentially
-    cityCoords = np.array([ tuple( map( float, coord.split() ) ) for coord in f ]).tolist()
-    city_names = open("city_names.txt", 'r').read().splitlines()
-    popSize = 10
+
+
     
-    #Call the class object
-    initial = initialize(cityCoords, city_names, popSize)
-    
-    listOfPaths= initial.generatePath()
-    #distances = initial.distance_between_cities(cityCoords).values()
-    
-    population = initial.initialPopulation()
-    
-    for idx, pop_plot in enumerate(population):
+    '''for idx, pop_plot in enumerate(population):
         print('Init pop. ' + str(idx), pop_plot)
         print('\n')
-        initial.plot_pop(pop_plot)
+        initial.plot_pop(pop_plot)'''
 
     genetics = GeneticAlgorithm()
-    fitness = genetics.path_fitness(cityCoords)
+    '''fitness = genetics.path_fitness(cityCoords)
     ranks = genetics.rankPaths(population)
-    #selected_values = genetics.perform_selection(ranks, 5)
+    selected_values = genetics.perform_selection(ranks, 5)'''
     
     #This is the number of "fit" people per generation. Can change it
     elites = 5
+    rate = random.uniform(0,1)
 
     #popp = genetics.rankPaths(population)
     
@@ -315,32 +314,28 @@ if __name__ == '__main__':
     #So returns the values likes [0,2, 3,4,5,6,4,5,3,1]
     #Where the first 5 in the list are the top 5 rankings of the population (look at ranks)
     #Andd the rest are selections of ANY remaining 5, can be repeated but it doesn't matter because we will mate
-    selected_values = genetics.perform_selection(ranks,elites)
+    '''selected_values = genetics.perform_selection(ranks,elites)'''
     
     #This returns the population pool that will be used to mate using the selected values
-    poolForSex = genetics.get_pool_for_sex(population, selected_values)
+    '''poolForSex = genetics.get_pool_for_sex(population, selected_values)'''
     
     #The population after having sex
-    after = genetics.population_after_sex(poolForSex, elites)
-    print("-----------------------------BEFORE SEX-----------------------")
-    print(poolForSex)
-
-    print("-----------------------------AFTER SEX-----------------------")
-    print(after)
-    print("-----------------------------AFTER MUTATION-----------------------")
-
-    #Now we make them mate
-    #genetics.haveSex(poolForSex, elites)
-    
-    #Can use f and s for poolForSex since already in maps form.
-    #print(selected_values)
+    '''after = genetics.population_after_sex(poolForSex, elites)'''
+    #print("-----------------------------BEFORE SEX-----------------------")
     #print(poolForSex)
+
+    #print("-----------------------------AFTER SEX-----------------------")
+    #print(after)
+    #print("-----------------------------AFTER MUTATION-----------------------")
     
-
-
-
-    #new_pop = genetics.mating(ranks)
-    #print(new_pop)
+    '''Use the next two lines to see how it works with ONE map!!!!
+    genetics.mutate(after[0], rate)
+    print(rate, "rate")'''
     
+    '''mutated_pool = genetics.get_pool_after_mutation(after, rate)'''
+    
+    '''test_mutate_function = genetics.next_generation(population, elites, rate)''' #Works
+    
+    best_route = genetics.pass_time(elites, rate, 10000)
 
-    #Need to do: Fix mutation and make generate_next_population() using all the functions.
+    #Now to call the whole thing again but for X times, or X generations
