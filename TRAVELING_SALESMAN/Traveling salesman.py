@@ -40,6 +40,7 @@ class initialize:
                 verticalalignment='bottom',
                         )
             print(txt, xList[i], yList[i])
+        print('\n')
         plt.show()
         return
 
@@ -92,8 +93,7 @@ class GeneticAlgorithm:
         #results = []
         results = {}
         resultor = list()
-        elites = list()
-        new_pop = list()
+
         for i in range(len(population)):
             results[i] = self.path_fitness(population[i])
         #print(results[2])
@@ -102,12 +102,12 @@ class GeneticAlgorithm:
         resultor = list(results.values())
         mean = np.mean(resultor)
         std_dev = 0.5*np.std(resultor)
-        print(std_dev)
-        example = sorted(results.items(), key = operator.itemgetter(1))
+        #print(std_dev)
 
         new_dict = {key:val for key, val in results.items() if val < (mean + std_dev)}
-        print(list(new_dict.keys()))
-        print(type(new_dict))
+        print('THRESHOLD IS', (mean + std_dev))
+        #print(list(new_dict.keys()))
+        #print(type(new_dict))
         
         #selected_values = []
         
@@ -185,7 +185,7 @@ class GeneticAlgorithm:
     
     #MATING STUFF GOES HERE!!!!!
     def population_after_sex(self, poolForSex, elites):
-        print(poolForSex, 'PPPOOOOLLLL')
+        #print(poolForSex, 'PPPOOOOLLLL')
         pp = []
         
         for w in range(10):
@@ -198,9 +198,9 @@ class GeneticAlgorithm:
         
         pop_after = poolForSex + pp
         
-        print('\n\n\n\n\n')
-        print(pop_after, 'PPPPPPPPP')
-        print(len(pop_after))
+        #print('\n\n\n\n\n')
+        #print(pop_after, 'PPPPPPPPP')
+        #print(len(pop_after))
         '''
         #This is the length of the population that is not part of the elites
         
@@ -287,42 +287,12 @@ class GeneticAlgorithm:
     def get_pool_after_mutation(self, population, rate):
         return [self.mutate(population[i], rate) for i in range(len(population))]
     
-    #This funciton I found somewhere on StackOverFlow. The df parts at least.
-    #Basically, we pass in an eliteSize, so like "Top 3" or "Top 5"
-    #So the Top 5 populations, or maps, are kept intact. Meaning they survive for sure.
-    #The remaining 5 are selected randomly, could be repeated. So we can have repeated maps. This doesn't matter because
-    #We don't really save them anywhere (yet). And since we mutate and stuff it'll be different anyway.
-    #And it helps because then we wont "run" out of maps.
-    #I'm not sure if we NEED it, but I am using it for now to see where I go from here. Maybe it helps in recognizing the "best" map
-    def perform_selection(self, pop, eliteSize): #Again, I found this on stack overflow and modified it
-        #output = rankPathes(population)
-        df = pd.DataFrame(np.array(pop), columns=["Index","Fitness"])
-        #print(df)
-        #A cumulative sum is a sequence of partial sums of a given sequence
-        df['cumulative_sum'] = df.Fitness.cumsum()
-        #print(df['cumulative_sum'], "cum sum!!!!")
-        #Cumulative percentage is another way of expressing frequency distribution. 
-        #It calculates the percentage of the cumulative frequency within each interval, much as relative frequency distribution calculates the percentage of frequency.
-        df['cum_percentage'] = 100*df.cumulative_sum/df.Fitness.sum()
-        selected_values = [pop[i][0] for i in range(eliteSize)] #The 5 "maps" of the top 5 ranks. On ranks, the first value of the tuple
-            
-        #print(selected_values, '!st selection!!')
-        #Now pick the remaining randomly. Can be repeated "maps" because they are not considered elit
-        for i in range(len(pop) - eliteSize):
-            pick = 100*random.random()
-            #print("pick1!!", pick)
-            for i in range(0, len(pop)):
-                if pick <= df.iat[i,3]:
-                    #print(df.iat[i,3])
-                    selected_values.append(pop[i][0])
-                    break
-            #Returns map #'s or map ID's. So like Map2, Map5, Map1, etc. ID's!!! NOT ENTIRE MAPS!!!!    
-        return selected_values
 
-    def next_generation(self, population, elites, rate):
+    def next_generation(self, population):
         #Population would start with the inital one and then each time after the mutation, it will change
-        ranks = self.rankPaths(population)
-        selections = self.perform_selection(ranks, elites)
+        selections = self.rankPaths(population)
+        elites = len(selections)
+        rate = random.random()
         poolForSex = self.get_pool_for_sex(population, selections)
         afterSex = self.population_after_sex(poolForSex, elites)
         mutated_pool = self.get_pool_after_mutation(afterSex, rate)
@@ -330,33 +300,33 @@ class GeneticAlgorithm:
         return mutated_pool
     
     #Generations meaning how many generations to run the program for
-    def pass_time(self, elites, rate, generations):
-        f = open("TSM.txt", 'r').read().splitlines()
-        cityCoords = np.array([ tuple( map( float, coord.split() ) ) for coord in f ]).tolist()
-        city_names = open("city_names.txt", 'r').read().splitlines()
-        popSize = 10
-        initial = initialize(cityCoords, city_names, popSize)
-        population = initial.initialPopulation()
+    def pass_time(self, population, generations):
         #Runs the thing generations times
-        #After each run, the optimal route and stuff recognizes
+        optimal_routes = []
         for i in range(generations):
-            population = self.next_generation(population, elites, rate)
-            print("Population",i,population)
+            population = self.next_generation(population)
+            print("Population",i,population, len(population))
             print('\n')
-        best_rank = self.rankPaths(population)[0][0] #Has to be outside cause population[0][0] doesnt work.
-        optimal_route = population[best_rank]
-        #ordered_cities = self.get_names(optimal_route,cityCoords,city_names)
-        #print([(indx,val) for indx,val in enumerate(ordered_cities)])
-        #plot_pop(optimal_route)
-        print(optimal_route)
-        initial.plot_pop(optimal_route)
-        '''best_rank = self.rankPaths(population)[0][0] #Has to be outside cause population[0][0] doesnt work.
-        optimal_route = population[best_rank]
-        #ordered_cities = self.get_names(optimal_route,cityCoords,city_names)
-        #print([(indx,val) for indx,val in enumerate(ordered_cities)])
-        #plot_pop(optimal_route)
-        print(optimal_route)
-        initial.plot_pop(optimal_route)'''
+            best_rank = self.rankPaths(population)
+            optimal_route = population[best_rank[0]]
+            optimal_routes.append(optimal_route)
+
+            
+        optimal_dists = []
+        for i in range(len(optimal_routes)):
+            optimal_dists.append(self.path_fitness(optimal_routes[i]))
+            
+        #Indices start at 0!!!!!!!!!!!!!!!!
+        print('\n')
+        print(optimal_routes, 'OPTIMAL ROUTES')
+        print('\n')
+        print(optimal_dists, 'OPTIMAL DISTS')
+        print('\n')
+        print('Best route at index',optimal_dists.index(min(optimal_dists)))
+        optimal_route_index = optimal_dists.index(min(optimal_dists))
+        print(optimal_routes[optimal_route_index], 'BEST ROUTE SO FAR!!!')
+        print('\n')
+        initial.plot_pop(optimal_routes[optimal_route_index])
         
         return 
 
@@ -376,20 +346,20 @@ if __name__ == '__main__':
         initial.plot_pop(pop_plot)
 
     genetics = GeneticAlgorithm()
-    fitness = genetics.path_fitness(cityCoords)
-    ranks = genetics.rankPaths(population)
-    elites = len(ranks)
-    ######################33 - NED TO FIX!!! ###################################
-    #selected_values = genetics.perform_selection(ranks, 5)
+    #fitness = genetics.path_fitness(cityCoords)
+    #ranks = genetics.rankPaths(population)
+    #elites = len(ranks)
+    #rate = random.random()
+    #selected_values = ranks
+    #poolForSex = genetics.get_pool_for_sex(population, selected_values)
+    #after = genetics.population_after_sex(poolForSex, elites)
+    #mutated_pool = genetics.get_pool_after_mutation(after, rate)
+
+    generations = 10
     
-    #This is the number of "fit" people per generation. Can change it
-    #elites = 4 #2 doesn't return it for 7/8 cities
-    rate = random.random()
+    genetics.pass_time(population, generations)
     
-    selected_values = ranks
-    poolForSex = genetics.get_pool_for_sex(population, selected_values)
-    after = genetics.population_after_sex(poolForSex, elites)
-    mutated_pool = genetics.get_pool_after_mutation(after, rate)
+    print('-------------------------END----------------------')
 
     #popp = genetics.rankPaths(population)
     
