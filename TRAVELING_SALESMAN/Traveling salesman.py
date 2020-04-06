@@ -106,9 +106,12 @@ class GeneticAlgorithm:
         example = sorted(results.items(), key = operator.itemgetter(1))
 
         new_dict = {key:val for key, val in results.items() if val < (mean + std_dev)}
+        print(list(new_dict.keys()))
         print(type(new_dict))
-        lister = new_dict.items()
-        print(lister)
+        
+        #selected_values = []
+        
+
         #return lister
 
 
@@ -126,7 +129,8 @@ class GeneticAlgorithm:
         #print(example)
         #return list(new_dict)
         #print(type(sorted(results.items(), key = operator.itemgetter(1))))
-        return sorted(results.items(), key = operator.itemgetter(1)) #, reverse = True)
+        return list(new_dict.keys())
+        #return sorted(results.items(), key = operator.itemgetter(1)) #, reverse = True)
         #return sorted(combination, key = operator.itemgetter(0), reverse = True)
     
     #This pretty much just orders the thing correctly using the selected values
@@ -135,6 +139,7 @@ class GeneticAlgorithm:
   
     
     def haveSex(self, father, mother):
+        
         #father and mother are just names I gave them
         #father would be the poolForSex, but randomized in order and mother would be 
         #the same but starting from the end. I try to start from the end and then meet in the middle
@@ -169,10 +174,12 @@ class GeneticAlgorithm:
         #Whatever isn't from father, include to here
         tot_parent2 = [i for i in mother if i not in tot_parent1]
         #print(tot_parent2)
+        child = tot_parent1 + tot_parent2
+     
         
         #Returns the combination of the two for ONE MAP. For i=2 in range(LosingLength), new values for gen1length and gen2length are formed and the same thing is done.
         #In the end, we should have run this 5 times if the elites was 5. Or 9 times if the elites was 1.
-        return tot_parent1 + tot_parent2
+        return child
         
         
     
@@ -180,8 +187,7 @@ class GeneticAlgorithm:
     def population_after_sex(self, poolForSex, elites):
         print(poolForSex, 'PPPOOOOLLLL')
         pp = []
-        pp.append(elites)
-        pp.pop(0)
+        
         for w in range(10):
             one_parent = int(random.uniform(0,elites))
             two_parent = int(random.uniform(0,elites))
@@ -190,9 +196,11 @@ class GeneticAlgorithm:
             ppp = self.haveSex(poolForSex[one_parent], poolForSex[two_parent])
             pp.append(ppp)
         
+        pop_after = poolForSex + pp
+        
         print('\n\n\n\n\n')
-        print(pp, 'PPPPPPPPP')
-        print(len(pp))
+        print(pop_after, 'PPPPPPPPP')
+        print(len(pop_after))
         '''
         #This is the length of the population that is not part of the elites
         
@@ -223,7 +231,7 @@ class GeneticAlgorithm:
         #Returns the population of maps after having sex.
         return combined
         '''
-        return pp 
+        return pop_after
     
     #Need to fix to work with functions.
     def mutate(self, individual_city, rate):
@@ -376,7 +384,12 @@ if __name__ == '__main__':
     
     #This is the number of "fit" people per generation. Can change it
     #elites = 4 #2 doesn't return it for 7/8 cities
-    rate = random.uniform(0,1)
+    rate = random.random()
+    
+    selected_values = ranks
+    poolForSex = genetics.get_pool_for_sex(population, selected_values)
+    after = genetics.population_after_sex(poolForSex, elites)
+    mutated_pool = genetics.get_pool_after_mutation(after, rate)
 
     #popp = genetics.rankPaths(population)
     
@@ -387,10 +400,10 @@ if __name__ == '__main__':
     #selected_values = genetics.perform_selection(ranks,elites)
     
     #This returns the population pool that will be used to mate using the selected values
-    poolForSex = genetics.get_pool_for_sex(population, ranks)
+    #poolForSex = genetics.get_pool_for_sex(population, ranks)
     
     #The population after having sex
-    after = genetics.population_after_sex(poolForSex, elites)
+    #after = genetics.population_after_sex(poolForSex, elites)
     #print("-----------------------------BEFORE SEX-----------------------")
     #print(poolForSex)
 
@@ -399,13 +412,13 @@ if __name__ == '__main__':
     #print("-----------------------------AFTER MUTATION-----------------------")
     
     #Use the next two lines to see how it works with ONE map!!!!
-    genetics.mutate(after[0], rate)
-    print(rate, "rate")
+    #genetics.mutate(after[0], rate)
+    #print(rate, "rate")
     
-    mutated_pool = genetics.get_pool_after_mutation(after, rate)
+    #mutated_pool = genetics.get_pool_after_mutation(after, rate)
     
     #So this does GENERATION2!!! So far, we only looked at how shit happens for GENRATION1.
-    #test_mutate_function = genetics.next_generation(population, elites, rate)#Works
+    #test_mutate_function = genetics.next_generation(mutated_pool, elites, rate)#Works
     
     #best_route = genetics.pass_time(elites, rate, 10)
     #y = 10000

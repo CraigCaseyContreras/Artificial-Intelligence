@@ -325,7 +325,9 @@ if __name__ == '__main__':
     #Where the first 5 in the list are the top 5 rankings of the population (look at ranks)
     #Andd the rest are selections of ANY remaining 5, can be repeated but it doesn't matter because we will mate
     selected_values = genetics.perform_selection(ranks,elites)
-    
+    selected_values.pop(0)
+    selected_values.pop(1)
+    selected_values.pop(2)
     #This returns the population pool that will be used to mate using the selected values
     poolForSex = genetics.get_pool_for_sex(population, selected_values)
     
