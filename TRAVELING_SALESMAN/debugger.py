@@ -83,50 +83,20 @@ class GeneticAlgorithm:
     #do 1/totalDistance.
     def path_fitness(self, people):
         total_dis = self.total_distance(people)
-        fitness = float(total_dis)
-        #fitness = 1 / float(total_dis)
+        fitness = 1 / float(total_dis)
         return fitness
     
     #Rank them bitches
     def rankPaths(self, population):
         #results = []
         results = {}
-        resultor = list()
-        elites = list()
-        new_pop = list()
         for i in range(len(population)):
             results[i] = self.path_fitness(population[i])
-        #print(results[2])
-            #resultor[i] = self.path_fitness(population[i])
-        
-        resultor = list(results.values())
-        mean = np.mean(resultor)
-        std_dev = 0.5*np.std(resultor)
-        print(std_dev)
-        example = sorted(results.items(), key = operator.itemgetter(1))
-
-        new_dict = {key:val for key, val in results.items() if val < (mean + std_dev)}
-        print(type(new_dict))
-        lister = new_dict.items()
-        print(lister)
-        #return lister
-
-
-        #print('\n\n\n')
-        #print(combination, 'COMBO!!!!!!!!!!')
-        #for y in range(len(resultor)):
-        #    print(resultor[2])
-        
-        #print(results)
             #results.append(self.path_fitness(population[i]))             
         #This just sorts them in order from greated fitness to least fitness
         # population #: fitness value. There are 10 in total because made 10 populations            
-        #combination = [list(a) for a in zip(results, population)]  
-
-        #print(example)
-        #return list(new_dict)
-        #print(type(sorted(results.items(), key = operator.itemgetter(1))))
-        return sorted(results.items(), key = operator.itemgetter(1)) #, reverse = True)
+        #combination = [list(a) for a in zip(results, population)]        
+        return sorted(results.items(), key = operator.itemgetter(1), reverse = True)
         #return sorted(combination, key = operator.itemgetter(0), reverse = True)
     
     #This pretty much just orders the thing correctly using the selected values
@@ -175,36 +145,13 @@ class GeneticAlgorithm:
         return tot_parent1 + tot_parent2
         
         
-    
-    #MATING STUFF GOES HERE!!!!!
     def population_after_sex(self, poolForSex, elites):
-        print(poolForSex, 'PPPOOOOLLLL')
-        pp = []
-        pp.append(elites)
-        pp.pop(0)
-        for w in range(10):
-            one_parent = int(random.uniform(0,elites))
-            two_parent = int(random.uniform(0,elites))
-            if one_parent == two_parent:
-                two_parent = int(random.uniform(0,elites))
-            ppp = self.haveSex(poolForSex[one_parent], poolForSex[two_parent])
-            pp.append(ppp)
-        
-        print('\n\n\n\n\n')
-        print(pp, 'PPPPPPPPP')
-        print(len(pp))
-        '''
         #This is the length of the population that is not part of the elites
-        
         LosingLength = len(poolForSex) - elites
-        
         #print("-------------POPULATION AFTER SEX FUNCTION----------------")
-        
         #This just randomizes order of the pool and makes Good the pool's length
-        
         GoodLength = random.sample(poolForSex, len(poolForSex))
-        print('\n\n\n\n')
-        print(GoodLength, "GOOD LENGTH")
+        #print(GoodLength, "GOOD LENGTH")
         #print("POOL FOR SEX", poolForSex)
         #This is the first part of the population of only the elites. So need part 2 of the people to have sex to survive
         #This hold 5 maps, NOT 5 cities, depending on the elites value. If elites was 2, part1 hold 2 MAPS.
@@ -222,8 +169,6 @@ class GeneticAlgorithm:
         combined = part1 + part2
         #Returns the population of maps after having sex.
         return combined
-        '''
-        return pp 
     
     #Need to fix to work with functions.
     def mutate(self, individual_city, rate):
@@ -342,15 +287,7 @@ class GeneticAlgorithm:
         #plot_pop(optimal_route)
         print(optimal_route)
         initial.plot_pop(optimal_route)
-        '''best_rank = self.rankPaths(population)[0][0] #Has to be outside cause population[0][0] doesnt work.
-        optimal_route = population[best_rank]
-        #ordered_cities = self.get_names(optimal_route,cityCoords,city_names)
-        #print([(indx,val) for indx,val in enumerate(ordered_cities)])
-        #plot_pop(optimal_route)
-        print(optimal_route)
-        initial.plot_pop(optimal_route)'''
-        
-        return 
+        return optimal_route
 
 
 if __name__ == '__main__':
@@ -370,12 +307,15 @@ if __name__ == '__main__':
     genetics = GeneticAlgorithm()
     fitness = genetics.path_fitness(cityCoords)
     ranks = genetics.rankPaths(population)
-    elites = len(ranks)
-    ######################33 - NED TO FIX!!! ###################################
+    
+
+
+    genetics = GeneticAlgorithm()
+
     #selected_values = genetics.perform_selection(ranks, 5)
     
     #This is the number of "fit" people per generation. Can change it
-    #elites = 4 #2 doesn't return it for 7/8 cities
+    elites = 5
     rate = random.uniform(0,1)
 
     #popp = genetics.rankPaths(population)
@@ -384,10 +324,10 @@ if __name__ == '__main__':
     #So returns the values likes [0,2, 3,4,5,6,4,5,3,1]
     #Where the first 5 in the list are the top 5 rankings of the population (look at ranks)
     #Andd the rest are selections of ANY remaining 5, can be repeated but it doesn't matter because we will mate
-    #selected_values = genetics.perform_selection(ranks,elites)
+    selected_values = genetics.perform_selection(ranks,elites)
     
     #This returns the population pool that will be used to mate using the selected values
-    poolForSex = genetics.get_pool_for_sex(population, ranks)
+    poolForSex = genetics.get_pool_for_sex(population, selected_values)
     
     #The population after having sex
     after = genetics.population_after_sex(poolForSex, elites)
@@ -398,20 +338,14 @@ if __name__ == '__main__':
     #print(after)
     #print("-----------------------------AFTER MUTATION-----------------------")
     
-    #Use the next two lines to see how it works with ONE map!!!!
+    '''Use the next two lines to see how it works with ONE map!!!!
     genetics.mutate(after[0], rate)
-    print(rate, "rate")
+    print(rate, "rate")'''
     
     mutated_pool = genetics.get_pool_after_mutation(after, rate)
     
-    #So this does GENERATION2!!! So far, we only looked at how shit happens for GENRATION1.
-    #test_mutate_function = genetics.next_generation(population, elites, rate)#Works
+    '''test_mutate_function = genetics.next_generation(population, elites, rate)''' #Works
     
-    #best_route = genetics.pass_time(elites, rate, 10)
-    #y = 10000
-    #test = 100
+    #best_route = genetics.pass_time(elites, rate, 10000)
 
     #Now to call the whole thing again but for X times, or X generations
-    
-    
-    #Need to do: Make population grow, mate each pair
