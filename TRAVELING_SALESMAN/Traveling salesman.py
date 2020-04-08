@@ -241,45 +241,48 @@ class GeneticAlgorithm:
         #This function is run 10 times, each for each map. And for a map, it is also run 10 times, each for cities.
         #So if exchanged is 2 and exchanged_with is 7 and those two potisions change. But this goes on for 10 times
         mutation_pick = random.random()
-        if  mutation_pick < rate:
-            for exchanged in range(len(individual_city)):
+        if rate > 0.9:
+            if  mutation_pick > 0.5:
+                for exchanged in range(len(individual_city)):
+                    exchanged_with = int(random.random() * len(individual_city))
+                    #print('\n')
+                    #print(exchanged, 'exchanged')
+                    #print(exchanged_with, 'exchanged with')
+                
+                    city1 = individual_city[exchanged]
+                    #print(city1, 'city1')
+                    city2 = individual_city[exchanged_with]
+                    #print(city2, 'city2')
+                    #print('\n')
+                    
+                    individual_city[exchanged] = city2
+                
+                    individual_city[exchanged_with] = city1
+                    #print(individual_city, 'individual city')
+                    
+            elif mutation_pick < 0.5:
+                #Victoria's thing. Switches 2 random elements. ONLY 2 though. It could be that it tries switching with itself.
+                #For this, need to include if-else stament I think?? Or just no mutation at all??
+                exchanged = int(random.random() * len(individual_city))
                 exchanged_with = int(random.random() * len(individual_city))
+                #If they are the same value, then no mutation? So all good?
                 #print('\n')
                 #print(exchanged, 'exchanged')
                 #print(exchanged_with, 'exchanged with')
-            
+                
                 city1 = individual_city[exchanged]
                 #print(city1, 'city1')
                 city2 = individual_city[exchanged_with]
                 #print(city2, 'city2')
                 #print('\n')
-                
+                    
                 individual_city[exchanged] = city2
-            
+                
                 individual_city[exchanged_with] = city1
                 #print(individual_city, 'individual city')
-                
-        else:
-            #Victoria's thing. Switches 2 random elements. ONLY 2 though. It could be that it tries switching with itself.
-            #For this, need to include if-else stament I think?? Or just no mutation at all??
-            exchanged = int(random.random() * len(individual_city))
-            exchanged_with = int(random.random() * len(individual_city))
-            #If they are the same value, then no mutation? So all good?
-            #print('\n')
-            #print(exchanged, 'exchanged')
-            #print(exchanged_with, 'exchanged with')
-            
-            city1 = individual_city[exchanged]
-            #print(city1, 'city1')
-            city2 = individual_city[exchanged_with]
-            #print(city2, 'city2')
-            #print('\n')
-                
-            individual_city[exchanged] = city2
-            
-            individual_city[exchanged_with] = city1
-            #print(individual_city, 'individual city')
         
+        else:
+            pass
         return individual_city
 
     #This returns the pool of maps after mutating each one. Code is about the same as the get_pool_for_sex() one.
@@ -336,14 +339,14 @@ if __name__ == '__main__':
     f = open("TSM.txt", 'r').read().splitlines()
     cityCoords = np.array([ tuple( map( float, coord.split() ) ) for coord in f ]).tolist()
     city_names = open("city_names.txt", 'r').read().splitlines()
-    popSize = 10
+    popSize = 50
     initial = initialize(cityCoords, city_names, popSize)
     population = initial.initialPopulation()
     
-    for idx, pop_plot in enumerate(population):
+    '''for idx, pop_plot in enumerate(population):
         print('Init pop. ' + str(idx), pop_plot)
         print('\n')
-        initial.plot_pop(pop_plot)
+        initial.plot_pop(pop_plot)'''
 
     genetics = GeneticAlgorithm()
     #fitness = genetics.path_fitness(cityCoords)
@@ -355,7 +358,7 @@ if __name__ == '__main__':
     #after = genetics.population_after_sex(poolForSex, elites)
     #mutated_pool = genetics.get_pool_after_mutation(after, rate)
 
-    generations = 10
+    generations = 200
     
     genetics.pass_time(population, generations)
     
