@@ -175,11 +175,19 @@ class GeneticAlgorithm:
         tot_parent2 = [i for i in mother if i not in tot_parent1]
         #print(tot_parent2)
         child = tot_parent1 + tot_parent2
+        
+        tot_parent1b = [mother[i] for i in range(first_generation, last_generation)]
+        #print(mother, "MOOTHER")
+        #print(tot_parent1)
+        #Whatever isn't from father, include to here
+        tot_parent2b = [i for i in father if i not in tot_parent1b]
+        #print(tot_parent2)
+        childb = tot_parent1b + tot_parent2b
      
         
         #Returns the combination of the two for ONE MAP. For i=2 in range(LosingLength), new values for gen1length and gen2length are formed and the same thing is done.
         #In the end, we should have run this 5 times if the elites was 5. Or 9 times if the elites was 1.
-        return child
+        return (child, childb)
         
         
     
@@ -193,8 +201,9 @@ class GeneticAlgorithm:
             two_parent = int(random.uniform(0,elites))
             if one_parent == two_parent:
                 two_parent = int(random.uniform(0,elites))
-            ppp = self.haveSex(poolForSex[one_parent], poolForSex[two_parent])
+            (ppp, ppp2) = self.haveSex(poolForSex[one_parent], poolForSex[two_parent])
             pp.append(ppp)
+            pp.append(ppp2)
         
         pop_after = poolForSex + pp
         
