@@ -338,9 +338,10 @@ class GeneticAlgorithm:
         optimal_route_index = optimal_dists.index(min(optimal_dists))
         print(optimal_routes[optimal_route_index], 'BEST ROUTE SO FAR!!!')
         print('\n')
+        print('Distance is:', self.path_fitness(optimal_routes[optimal_route_index]))
         initial.plot_pop(optimal_routes[optimal_route_index])
         
-        return 
+        return (min(optimal_dists), optimal_route_index)
 
 
 if __name__ == '__main__':
@@ -348,7 +349,10 @@ if __name__ == '__main__':
     f = open("TSM.txt", 'r').read().splitlines()
     cityCoords = np.array([ tuple( map( float, coord.split() ) ) for coord in f ]).tolist()
     city_names = open("city_names.txt", 'r').read().splitlines()
-    popSize = 50
+    #popSize = 10
+    #popSize = 25
+    #popSize = 50
+    popSize = 100
     initial = initialize(cityCoords, city_names, popSize)
     population = initial.initialPopulation()
     
@@ -367,9 +371,23 @@ if __name__ == '__main__':
     #after = genetics.population_after_sex(poolForSex, elites)
     #mutated_pool = genetics.get_pool_after_mutation(after, rate)
 
-    generations = 200
+    #generations = 100
+    #generations = 250
+    #generations = 500
+    generations = 1000
+    #generations = 2000
     
-    genetics.pass_time(population, generations)
+    minimum_distances = []
+    generation_numbers = []
+    for i in range(13):
+        (minimum_distance, generation_number) = genetics.pass_time(population, generations)
+        print('Taking averages')
+        minimum_distances.append(minimum_distance)
+        generation_numbers.append(generation_number)
+    avg_min_dists = np.mean(minimum_distances)
+    avg_generations = np.mean(generation_numbers)
+    print('Average Distance for Optimal Path:', avg_min_dists)
+    print('Average Generations needed to get there:', avg_generations)
     
     print('-------------------------END----------------------')
 
